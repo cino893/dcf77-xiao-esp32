@@ -107,7 +107,7 @@ void loop() {
       getLocalTime(&currentTime);
       
       // If we've been transmitting for a while (e.g., 1 hour) and next sync is far away
-      if (currentTime.tm_min >= 0) {  // Adjust based on desired transmission duration
+      if (currentTime.tm_min >= 60) {  // After transmitting for at least 1 hour
         int secondsToNextSync = getSecondsUntilNextSync();
         
         // If next sync is more than 10 minutes away, consider going to sleep
@@ -323,7 +323,7 @@ uint8_t calculateParity(uint8_t bits[], int start, int end) {
   for (int i = start; i <= end; i++) {
     if (bits[i]) count++;
   }
-  return (count % 2 == 0) ? 0 : 1;  // Even parity
+  return (count % 2 == 0) ? 0 : 1;  // Even parity: return 1 if odd number of bits, 0 if even
 }
 
 void setupDeepSleep() {
