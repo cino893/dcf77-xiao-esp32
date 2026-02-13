@@ -14,6 +14,7 @@ Emulator sygnału DCF77 dla zegarków Casio Multiband i innych odbiorników czas
 
 - 🕐 **Automatyczna synchronizacja**: Wybudza się w godzinach synchronizacji zegarków Casio (2-5 rano)
 - 📡 **Emulacja DCF77**: Pełna implementacja protokołu DCF77 z kodowaniem BCD
+- 🎚️ **Modulacja amplitudy PWM**: Precyzyjne poziomy sygnału dla kompatybilności z Casio (~20% AM)
 - 🌐 **Synchronizacja NTP**: Pobiera dokładny czas z serwerów NTP przez WiFi
 - 🔋 **Oszczędzanie energii**: Deep sleep pomiędzy transmisjiami (pobór ~40-50μA)
 - 💰 **Tanie komponenty**: Całkowity koszt ~20-30 PLN (części z AliExpress)
@@ -60,7 +61,15 @@ cp config.h.example config.h
 ```cpp
 #define WIFI_SSID "TwojSSID"
 #define WIFI_PASSWORD "TwojeHaslo"
+
+// Dla zegarków Casio: zalecane ustawienia PWM (domyślne)
+#define DCF77_PWM_MODE true          // Tryb PWM dla Casio
+#define DCF77_AMPLITUDE_LOW 51       // 20% amplituda (LOW)
+#define DCF77_AMPLITUDE_HIGH 0       // 0% amplituda (HIGH)
+#define DCF77_PWM_FREQUENCY 2000     // 2 kHz PWM
 ```
+
+> ⚠️ **Ważne dla zegarków Casio**: Tryb PWM z amplitudą ~20% jest **wymagany** dla poprawnej synchronizacji większości zegarków Casio. Zobacz [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md) dla szczegółów.
 
 4. **Otwórz projekt w Arduino IDE**:
    - Otwórz plik `dcf77-xiao-esp32.ino`
@@ -166,6 +175,7 @@ DCF77 signal emulator for Casio Multiband watches and other radio-controlled clo
 
 - 🕐 **Automatic synchronization**: Wakes up during Casio watch sync hours (2-5 AM)
 - 📡 **DCF77 emulation**: Full DCF77 protocol implementation with BCD encoding
+- 🎚️ **PWM amplitude modulation**: Precise signal levels for Casio compatibility (~20% AM)
 - 🌐 **NTP synchronization**: Fetches accurate time from NTP servers via WiFi
 - 🔋 **Power saving**: Deep sleep between transmissions (~40-50μA)
 - 💰 **Cheap components**: Total cost ~5-8 USD (AliExpress parts)
@@ -212,7 +222,15 @@ cp config.h.example config.h
 ```cpp
 #define WIFI_SSID "YourSSID"
 #define WIFI_PASSWORD "YourPassword"
+
+// For Casio watches: recommended PWM settings (default)
+#define DCF77_PWM_MODE true          // PWM mode for Casio
+#define DCF77_AMPLITUDE_LOW 51       // 20% amplitude (LOW)
+#define DCF77_AMPLITUDE_HIGH 0       // 0% amplitude (HIGH)
+#define DCF77_PWM_FREQUENCY 2000     // 2 kHz PWM
 ```
+
+> ⚠️ **Important for Casio watches**: PWM mode with ~20% amplitude is **required** for proper synchronization of most Casio watches. See [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md) for details.
 
 4. **Open project in Arduino IDE**:
    - Open file `dcf77-xiao-esp32.ino`

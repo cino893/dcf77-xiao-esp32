@@ -20,6 +20,9 @@
 // DCF77 signal pin
 #define DCF77_PIN 4  // D2 on XIAO ESP32C3
 
+// PWM channel for DCF77 (ESP32 specific)
+#define DCF77_PWM_CHANNEL 0
+
 // Time sync parameters
 #define NTP_SERVER "pool.ntp.org"
 #define GMT_OFFSET_SEC 3600      // CET = UTC+1
@@ -44,6 +47,8 @@ struct tm currentTime;
 // Function declarations
 void setupWiFi();
 void syncNTPTime();
+void setupDCF77Output();
+void setDCF77Amplitude(uint8_t amplitude);
 void transmitDCF77Signal();
 void encodeDCF77Minute(uint8_t dcf77Buffer[]);
 uint8_t calculateParity(uint8_t bits[], int start, int end);
@@ -60,8 +65,7 @@ void setup() {
   Serial.printf("Boot count: %d\n", bootCount);
   
   // Configure DCF77 output pin
-  pinMode(DCF77_PIN, OUTPUT);
-  digitalWrite(DCF77_PIN, LOW);
+  setupDCF77Output();
   
   // Connect to WiFi
   setupWiFi();
@@ -170,6 +174,53 @@ void syncNTPTime() {
   }
 }
 
+void setupDCF77Output() {
+  Serial.println("Configuring DCF77 output...");
+  
+#ifdef DCF77_PWM_MODE
+  #if DCF77_PWM_MODE
+    // Use PWM for precise amplitude control (recommended for Casio compatibility)
+    Serial.println("  Mode: PWM amplitude modulation");
+    Serial.printf("  LOW amplitude: %d (~%.1f%%)\n", DCF77_AMPLITUDE_LOW, (DCF77_AMPLITUDE_LOW / 255.0) * 100);
+    Serial.printf("  HIGH amplitude: %d (~%.1f%%)\n", DCF77_AMPLITUDE_HIGH, (DCF77_AMPLITUDE_HIGH / 255.0) * 100);
+    Serial.printf("  PWM frequency: %d Hz\n", DCF77_PWM_FREQUENCY);
+    
+    // Configure LEDC (LED Control) peripheral for PWM
+    // ESP32 LEDC provides hardware PWM with 16 channels
+    ledcSetup(DCF77_PWM_CHANNEL, DCF77_PWM_FREQUENCY, 8); // 8-bit resolution (0-255)
+    ledcAttachPin(DCF77_PIN, DCF77_PWM_CHANNEL);
+    
+    // Start with HIGH amplitude (carrier off)
+    ledcWrite(DCF77_PWM_CHANNEL, DCF77_AMPLITUDE_HIGH);
+  #else
+    // Use simple GPIO on/off (legacy mode)
+    Serial.println("  Mode: Simple GPIO on/off (legacy)");
+    pinMode(DCF77_PIN, OUTPUT);
+    digitalWrite(DCF77_PIN, HIGH);
+  #endif
+#else
+  // Default to GPIO mode if not defined
+  Serial.println("  Mode: Simple GPIO on/off (default)");
+  pinMode(DCF77_PIN, OUTPUT);
+  digitalWrite(DCF77_PIN, HIGH);
+#endif
+}
+
+void setDCF77Amplitude(uint8_t amplitude) {
+#ifdef DCF77_PWM_MODE
+  #if DCF77_PWM_MODE
+    // Set PWM duty cycle to control amplitude
+    ledcWrite(DCF77_PWM_CHANNEL, amplitude);
+  #else
+    // Legacy GPIO mode: HIGH for carrier off, LOW for carrier on
+    digitalWrite(DCF77_PIN, amplitude > 127 ? HIGH : LOW);
+  #endif
+#else
+  // Default GPIO mode
+  digitalWrite(DCF77_PIN, amplitude > 127 ? HIGH : LOW);
+#endif
+}
+
 void transmitDCF77Signal() {
   uint8_t dcf77Buffer[60] = {0};
   
@@ -189,19 +240,21 @@ void transmitDCF77Signal() {
     unsigned long bitStart = millis();
     
     if (second == 0) {
-      // Minute marker: no carrier for entire second
-      digitalWrite(DCF77_PIN, LOW);
+      // Minute marker: reduced amplitude for entire second
+      // DCF77 standard: amplitude reduction for the full second
+      setDCF77Amplitude(DCF77_AMPLITUDE_LOW);
       Serial.print("M");
     } else {
       // Bit transmission
       int carrierDuration = dcf77Buffer[second] ? DCF77_CARRIER_HIGH : DCF77_CARRIER_LOW;
       
-      // Carrier on (reduced amplitude)
-      digitalWrite(DCF77_PIN, LOW);
+      // Carrier on (reduced amplitude) - this is when signal is present
+      // For Casio: ~20% amplitude allows device to detect modulation
+      setDCF77Amplitude(DCF77_AMPLITUDE_LOW);
       delay(carrierDuration);
       
-      // Carrier off (full amplitude)
-      digitalWrite(DCF77_PIN, HIGH);
+      // Carrier off (no amplitude) - this is when signal is absent
+      setDCF77Amplitude(DCF77_AMPLITUDE_HIGH);
       
       Serial.print(dcf77Buffer[second]);
     }
