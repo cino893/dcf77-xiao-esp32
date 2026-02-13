@@ -1,0 +1,37 @@
+/*
+ * Configuration file for DCF77 Emulator
+ * 
+ * Copy this file to "config.h" and fill in your WiFi credentials
+ */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// WiFi Configuration
+// Replace with your WiFi network credentials
+#define WIFI_SSID "your_wifi_ssid"
+#define WIFI_PASSWORD "your_wifi_password"
+
+// Time Zone Configuration
+// CET (Central European Time) = UTC+1
+// CEST (Central European Summer Time) = UTC+2
+// Adjust these if you're in a different timezone
+#define TIMEZONE_OFFSET 1    // Hours offset from UTC (1 for CET)
+#define DST_OFFSET 1         // Additional hours during daylight saving time
+
+// NTP Server Configuration
+// You can use local NTP servers for better accuracy
+// Examples:
+//   Europe: "europe.pool.ntp.org"
+//   Germany: "de.pool.ntp.org"
+//   Poland: "pl.pool.ntp.org"
+#define NTP_SERVER_PRIMARY "pool.ntp.org"
+#define NTP_SERVER_SECONDARY "time.nist.gov"
+
+// DCF77 Transmission Settings
+#define TRANSMISSION_DURATION_MINUTES 60  // How long to transmit (minutes)
+
+// Debug Settings
+#define DEBUG_MODE true  // Set to false to disable serial debug output
+
+#endif
