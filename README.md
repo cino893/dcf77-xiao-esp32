@@ -159,6 +159,15 @@ Pull requesty są mile widziane! Dla większych zmian, proszę najpierw otwórz 
 
 ### 📚 Źródła
 
+**Dokumentacja projektu / Project Documentation:**
+- [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md) - Poziomy sygnału DCF77 i wymagania Casio
+- [TESTING.md](TESTING.md) - Szczegółowy przewodnik testowania
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Rozwiązywanie problemów
+- [HARDWARE.md](HARDWARE.md) - Schemat i montaż hardware
+- [ADVANCED.md](ADVANCED.md) - Zaawansowane modyfikacje
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Podsumowanie implementacji v2.0
+
+**Zasoby zewnętrzne / External Resources:**
 - [DCF77 Protocol Specification](https://en.wikipedia.org/wiki/DCF77)
 - [XIAO ESP32C3 Documentation](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/)
 - [ESP32 Deep Sleep Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/api-reference/system/sleep_modes.html)
@@ -320,6 +329,15 @@ Pull requests are welcome! For major changes, please open an issue first.
 
 ### 📚 References
 
+**Project Documentation:**
+- [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md) - DCF77 signal levels and Casio requirements
+- [TESTING.md](TESTING.md) - Comprehensive testing guide
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Troubleshooting and problem solving
+- [HARDWARE.md](HARDWARE.md) - Circuit diagram and hardware assembly
+- [ADVANCED.md](ADVANCED.md) - Advanced modifications
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Implementation summary v2.0
+
+**External Resources:**
 - [DCF77 Protocol Specification](https://en.wikipedia.org/wiki/DCF77)
 - [XIAO ESP32C3 Documentation](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/)
 - [ESP32 Deep Sleep Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/api-reference/system/sleep_modes.html)
