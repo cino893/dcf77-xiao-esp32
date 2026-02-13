@@ -1,0 +1,33 @@
+# Arduino build artifacts
+*.hex
+*.bin
+*.elf
+*.map
+build/
+.build/
+
+# IDE specific files
+.vscode/
+.vs/
+*.suo
+*.user
+*.sln.docstates
+
+# Arduino IDE
+.DS_Store
+*.swp
+*~
+
+# Sensitive configuration (do NOT commit WiFi credentials)
+# Users should copy config.h.example to config.h
+config.h
+
+# Temporary files
+tmp/
+*.tmp
+*.bak
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
