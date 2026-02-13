@@ -61,19 +61,40 @@ Drain → Antenna + GND przez rezystor 100Ω
 
 ### Precyzyjniejsza częstotliwość / More Accurate Frequency
 
-Obecna implementacja używa modulacji amplitudy z GPIO (on/off).
-Dla lepszej dokładności można użyć:
+**✅ ZAIMPLEMENTOWANE / IMPLEMENTED (v2.0)**: Obecna implementacja używa PWM do kontroli amplitudy!
 
-1. **PWM na 77.5 kHz**:
+Implementacja PWM dla modulacji amplitudy jest już dostępna w kodzie:
+
 ```cpp
-ledcSetup(0, 77500, 8);  // Channel 0, 77.5kHz, 8-bit resolution
-ledcAttachPin(DCF77_PIN, 0);
-ledcWrite(0, 128);  // 50% duty cycle
+// W config.h:
+#define DCF77_PWM_MODE true          // Włącz tryb PWM / Enable PWM mode
+#define DCF77_AMPLITUDE_LOW 51       // 20% amplituda dla Casio / 20% amplitude for Casio
+#define DCF77_AMPLITUDE_HIGH 0       // 0% amplituda (brak sygnału) / 0% (no signal)
+#define DCF77_PWM_FREQUENCY 2000     // 2 kHz PWM dla kontroli amplitudy / 2 kHz PWM for amplitude control
+```
+
+**Jak to działa / How it works**:
+- PWM (2 kHz) kontroluje średnią amplitudę sygnału / PWM (2 kHz) controls average signal amplitude
+- 20% duty cycle = ~20% mocy dla sygnału LOW / 20% duty cycle = ~20% power for LOW signal
+- 0% duty cycle = brak sygnału dla HIGH / 0% duty cycle = no signal for HIGH
+- Ważne dla zegarków Casio! / Important for Casio watches!
+
+**Zobacz szczegóły / See details**: [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md)
+
+### Przyszłe ulepszenia / Future improvements
+
+1. **Prawdziwa nośna 77.5 kHz / True 77.5 kHz carrier** (dla jeszcze większego zasięgu / for even better range):
+```cpp
+// Generowanie nośnej 77.5 kHz (opcjonalne)
+// Generate 77.5 kHz carrier (optional)
+ledcSetup(1, 77500, 8);  // Channel 1, 77.5kHz carrier
+ledcAttachPin(DCF77_PIN, 1);
+ledcWrite(1, 128);  // 50% duty cycle
 ```
 
 2. **Timer hardware**:
-- ESP32 ma timery sprzętowe
-- Można wygenerować dokładnie 77.5 kHz
+- ESP32 ma timery sprzętowe / ESP32 has hardware timers
+- Można wygenerować dokładnie 77.5 kHz / Can generate exactly 77.5 kHz
 
 ## 🔍 Testowanie / Testing
 
