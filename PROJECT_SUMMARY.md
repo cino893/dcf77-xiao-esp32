@@ -1,178 +1,178 @@
-# Project Summary / Podsumowanie Projektu
+# Project Summary
 
-## 🎯 Cel projektu / Project Goal
+## 🎯 Project Goal
 
-Stworzenie kompletnego repozytorium Arduino dla **Xiao ESP32 C3**, które:
-- ✅ Wybudza się w godzinach synchronizacji zegarków Casio Multiband (2-5 rano)
-- ✅ Pobiera dokładny czas przez WiFi (NTP)
-- ✅ Emituje sygnał DCF77 na piny
-- ✅ Osiąga zasięg minimum 5 metrów
-- ✅ Używa prostych, tanich komponentów z AliExpress (~20-30 PLN)
-- ✅ Zawiera pełną dokumentację w języku polskim i angielskim
+Creating a complete Arduino repository for **Xiao ESP32 C3** that:
+- ✅ Wakes up during Casio Multiband watch synchronization hours (2-5 AM)
+- ✅ Retrieves accurate time via WiFi (NTP)
+- ✅ Emits DCF77 signal on pins
+- ✅ Achieves minimum 5 meter range
+- ✅ Uses simple, cheap components from AliExpress (~$5-8)
+- ✅ Contains complete documentation in both Polish and English
 
-## 📦 Zawartość repozytorium / Repository Contents
+## 📦 Repository Contents
 
-### Kod źródłowy / Source Code
+### Source Code
 ```
-dcf77-xiao-esp32.ino      - Główny program Arduino (345 linii)
-config.h.example          - Szablon konfiguracji WiFi
-config.h                  - Lokalna konfiguracja (nie commitowana)
-```
-
-### Dokumentacja / Documentation
-```
-README.md                 - Główna dokumentacja (PL/EN, 250+ linii)
-HARDWARE.md               - Schemat i komponenty (200+ linii)
-BUILD.md                  - Instrukcja kompilacji i wgrywania (300+ linii)
-TROUBLESHOOTING.md        - Rozwiązywanie problemów (300+ linii)
-ADVANCED.md               - Zaawansowane funkcje (200+ linii)
-QUICKREF.md               - Szybki przewodnik (200+ linii)
-LICENSE                   - Licencja MIT
+dcf77-xiao-esp32.ino      - Main Arduino program (345 lines)
+config.h.example          - WiFi configuration template
+config.h                  - Local configuration (not committed)
 ```
 
-### Grafika / Graphics
+### Documentation
 ```
-schematic.svg             - Wizualny schemat obwodu
+README.md                 - Main documentation (PL/EN, 250+ lines)
+HARDWARE.md               - Schematic and components (200+ lines)
+BUILD.MD                  - Build and upload instructions (300+ lines)
+TROUBLESHOOTING.md        - Troubleshooting guide (300+ lines)
+ADVANCED.md               - Advanced features (200+ lines)
+QUICKREF.md               - Quick reference guide (200+ lines)
+LICENSE                   - MIT License
 ```
 
-### Przykłady / Examples
+### Graphics
 ```
-examples/simple_gpio_test/      - Test GPIO i LED
-examples/wifi_ntp_test/         - Test WiFi i synchronizacji czasu
+schematic.svg             - Visual circuit schematic
 ```
 
-## 🔧 Funkcje techniczne / Technical Features
+### Examples
+```
+examples/simple_gpio_test/      - GPIO and LED test
+examples/wifi_ntp_test/         - WiFi and time sync test
+```
 
-### Protokół DCF77
-- ✅ Pełna implementacja protokołu DCF77
-- ✅ Kodowanie BCD (Binary Coded Decimal)
-- ✅ Prawidłowe timingowanie:
-  - Bit "0": 100ms redukcji
-  - Bit "1": 200ms redukcji
-  - Marker minuty: brak sygnału
-- ✅ Bity parzystości (minute, hour, date)
-- ✅ Obsługa CET/CEST (czas letni/zimowy)
+## 🔧 Technical Features
 
-### Zarządzanie energią
+### DCF77 Protocol
+- ✅ Full DCF77 protocol implementation
+- ✅ BCD (Binary Coded Decimal) encoding
+- ✅ Correct timing:
+  - Bit "0": 100ms reduction
+  - Bit "1": 200ms reduction
+  - Minute marker: no signal
+- ✅ Parity bits (minute, hour, date)
+- ✅ CET/CEST support (daylight saving time)
+
+### Power Management
 - ✅ Deep sleep: 40-50μA
-- ✅ Automatyczne wybudzanie
-- ✅ Średni pobór: ~10-20mA
-- ✅ WiFi wyłączane po synchronizacji
+- ✅ Automatic wake-up
+- ✅ Average consumption: ~10-20mA
+- ✅ WiFi disabled after synchronization
 
-### Synchronizacja czasu
-- ✅ NTP z wieloma serwerami
-- ✅ Automatyczna konfiguracja strefy czasowej
-- ✅ Retry logic przy błędach
-- ✅ Obsługa czasu letniego
+### Time Synchronization
+- ✅ NTP with multiple servers
+- ✅ Automatic timezone configuration
+- ✅ Retry logic on errors
+- ✅ Daylight saving time support
 
 ### Hardware
-- ✅ Pin GPIO4 (D2) dla sygnału
-- ✅ Wzmocnienie tranzystorowe (BC547)
-- ✅ Antena ferrytowa (~200 zwojów)
-- ✅ Zasięg: 5-15 metrów
+- ✅ GPIO4 pin (D2) for signal
+- ✅ Transistor amplification (BC547)
+- ✅ Ferrite antenna (~200 turns)
+- ✅ Range: 5-15 meters
 
-## 📊 Statystyki projektu / Project Statistics
+## 📊 Project Statistics
 
-### Kod
-- **Linie kodu głównego**: ~345
-- **Linie przykładów**: ~100
-- **Funkcje**: 9 głównych
-- **Biblioteki**: WiFi, time.h, esp_sleep.h
+### Code
+- **Main code lines**: ~345
+- **Example lines**: ~100
+- **Functions**: 9 main functions
+- **Libraries**: WiFi, time.h, esp_sleep.h
 
-### Dokumentacja
-- **Pliki markdown**: 7
-- **Łączna liczba linii dokumentacji**: ~1800+
-- **Języki**: Polski i angielski
-- **Diagramy**: 1 SVG schematic
+### Documentation
+- **Markdown files**: 7
+- **Total documentation lines**: ~1800+
+- **Languages**: Polish and English
+- **Diagrams**: 1 SVG schematic
 
-### Koszty
-- **Komponenty**: ~20-30 PLN (~$5-8)
-- **Czas realizacji**: ~2-3 godziny montażu
-- **Poziom trudności**: Średni (wymaga lutowania)
+### Cost
+- **Components**: ~$5-8 USD
+- **Build time**: ~2-3 hours assembly
+- **Difficulty level**: Intermediate (requires soldering)
 
-## 🎓 Dla kogo ten projekt / Target Audience
+## 🎓 Target Audience
 
-### Idealny dla / Ideal for:
-- 👨‍🔬 Hobbyści elektroniki
-- ⌚ Właściciele zegarków Casio Multiband
-- 🏠 Mieszkańcy poza zasięgiem stacji DCF77
-- 🔧 Entuzjastów DIY
-- 📚 Studentów uczących się IoT
+### Ideal for:
+- 👨‍🔬 Electronics hobbyists
+- ⌚ Casio Multiband watch owners
+- 🏠 People outside DCF77 station range
+- 🔧 DIY enthusiasts
+- 📚 Students learning IoT
 
-### Wymagana wiedza / Required Knowledge:
-- ⚡ Podstawy elektroniki (rezystory, tranzystory)
-- 💻 Podstawy Arduino IDE
-- 🔌 Umiejętność lutowania (opcjonalnie - breadboard OK)
-- 📖 Czytanie schematów elektrycznych
+### Required Knowledge:
+- ⚡ Electronics basics (resistors, transistors)
+- 💻 Arduino IDE basics
+- 🔌 Soldering skills (optional - breadboard OK)
+- 📖 Reading electrical schematics
 
-## 🌟 Kluczowe zalety / Key Advantages
+## 🌟 Key Advantages
 
-### Techniczne / Technical:
-1. **Dokładność**: Synchronizacja z NTP (~10ms dokładności)
-2. **Niezawodność**: Retry logic i error handling
-3. **Efektywność**: Bardzo niski pobór energii
-4. **Kompatybilność**: Działa z większością odbiorników DCF77
+### Technical:
+1. **Accuracy**: NTP synchronization (~10ms accuracy)
+2. **Reliability**: Retry logic and error handling
+3. **Efficiency**: Very low power consumption
+4. **Compatibility**: Works with most DCF77 receivers
 
-### Praktyczne / Practical:
-1. **Niski koszt**: ~20-30 PLN za kompletny zestaw
-2. **Łatwa dostępność**: Wszystkie części z AliExpress
-3. **Prosty montaż**: Minimalna liczba komponentów
-4. **Dobra dokumentacja**: Krok po kroku w PL i EN
+### Practical:
+1. **Low cost**: ~$5-8 USD for complete set
+2. **Easy availability**: All parts from AliExpress
+3. **Simple assembly**: Minimal component count
+4. **Good documentation**: Step-by-step in PL and EN
 
 ### Open Source:
-1. **Licencja MIT**: Pełna swoboda użycia
-2. **Otwarty kod**: Można modyfikować
-3. **Community-friendly**: Pull requests mile widziane
-4. **Dobrze udokumentowany**: Łatwy do zrozumienia
+1. **MIT License**: Full freedom of use
+2. **Open code**: Can be modified
+3. **Community-friendly**: Pull requests welcome
+4. **Well documented**: Easy to understand
 
-## 🚀 Możliwości rozwoju / Future Enhancements
+## 🚀 Future Enhancements
 
-### Planowane funkcje / Planned Features:
-- [ ] PWM 77.5 kHz dla lepszej modulacji
-- [ ] Web interface do konfiguracji
-- [ ] Obsługa WWVB/MSF/JJY (inne systemy czasu)
-- [ ] OLED display ze statusem
+### Planned Features:
+- [ ] PWM 77.5 kHz for better modulation
+- [ ] Web interface for configuration
+- [ ] Support for WWVB/MSF/JJY (other time systems)
+- [ ] OLED display with status
 - [ ] OTA (Over-The-Air) updates
-- [ ] Tryb Access Point dla łatwej konfiguracji
-- [ ] Statystyki synchronizacji
+- [ ] Access Point mode for easy configuration
+- [ ] Synchronization statistics
 - [ ] PCB design
 
-### Możliwe ulepszenia / Possible Improvements:
-- Lepszy algorytm deep sleep
-- Adaptacyjna moc nadawania
-- Auto-tuning anteny
-- Bluetooth LE config
-- Batch mode dla wielu zegarków
+### Possible Improvements:
+- Better deep sleep algorithm
+- Adaptive transmission power
+- Antenna auto-tuning
+- Bluetooth LE configuration
+- Batch mode for multiple watches
 
-## 📈 Testowanie / Testing
+## 📈 Testing
 
-### Testy jednostkowe / Unit Tests:
+### Unit Tests:
 - ✅ GPIO output test
 - ✅ WiFi connection test
 - ✅ NTP synchronization test
 - ✅ DCF77 encoding test
 
-### Testy integracyjne / Integration Tests:
+### Integration Tests:
 - ✅ Full transmission cycle
 - ✅ Sleep/wake cycle
 - ✅ Error recovery
 - ✅ Real watch sync (Casio tests needed)
 
-## 🔒 Bezpieczeństwo / Security
+## 🔒 Security
 
-### Implementowane zabezpieczenia / Implemented Security:
-- ✅ WiFi credentials w .gitignore
-- ✅ Brak hardcoded passwords
+### Implemented Security:
+- ✅ WiFi credentials in .gitignore
+- ✅ No hardcoded passwords
 - ✅ Input validation
 - ✅ Safe memory handling
-- ✅ Error handling bez crash
+- ✅ Error handling without crashes
 
-### Zgodność z przepisami / Regulatory Compliance:
-- ⚠️ Niska moc (<100mW) - OK w większości krajów
-- ⚠️ Tylko użytek prywatny
-- ⚠️ Sprawdź lokalne przepisy RF
+### Regulatory Compliance:
+- ⚠️ Low power (<100mW) - OK in most countries
+- ⚠️ Private use only
+- ⚠️ Check local RF regulations
 
-## 📚 Wykorzystane technologie / Technologies Used
+## 📚 Technologies Used
 
 ### Hardware:
 - Seeed Studio XIAO ESP32C3 (ESP32-C3 RISC-V)
@@ -187,65 +187,61 @@ examples/wifi_ntp_test/         - Test WiFi i synchronizacji czasu
 - NTP client (configTime)
 - ESP32 deep sleep API
 
-### Narzędzia / Tools:
+### Tools:
 - Git / GitHub
 - Markdown for documentation
 - SVG for schematics
 - Arduino sketch format
 
-## 🎉 Osiągnięcia / Achievements
+## 🎉 Achievements
 
-✅ Pełna implementacja wymagań z zadania
-✅ Dokumentacja w dwóch językach (PL/EN)
-✅ Przykłady testowe
-✅ Wizualizacje (schemat SVG)
-✅ Kompleksowe rozwiązywanie problemów
-✅ Konfiguracja bez hardcoded credentials
+✅ Full implementation of task requirements
+✅ Documentation in two languages (PL/EN)
+✅ Test examples
+✅ Visualizations (SVG schematic)
+✅ Comprehensive troubleshooting guide
+✅ Configuration without hardcoded credentials
 ✅ MIT license (open source)
-✅ Code review przeprowadzony
-✅ Wszystkie issues z review naprawione
+✅ Code review conducted
+✅ All review issues fixed
 
-## 📞 Wsparcie / Support
+## 📞 Support
 
-### Gdzie uzyskać pomoc / Where to Get Help:
+### Where to Get Help:
 
 1. **GitHub Issues**: 
    https://github.com/cino893/dcf77-xiao-esp32/issues
 
-2. **Dokumentacja**:
-   - README.md - Start tutaj
-   - TROUBLESHOOTING.md - Problemy
-   - HARDWARE.md - Montaż
-   - BUILD.md - Kompilacja
+2. **Documentation**:
+   - README.md - Start here
+   - TROUBLESHOOTING.md - Problems
+   - HARDWARE.md - Assembly
+   - BUILD.md - Compilation
 
 3. **Community**:
-   - Pull requests mile widziane
-   - Issues po polsku i angielsku
+   - Pull requests welcome
+   - Issues in Polish and English accepted
    - Feedback appreciated
 
-## 🙏 Podziękowania / Acknowledgments
+## 🙏 Acknowledgments
 
-Projekt inspirowany przez:
+Project inspired by:
 - DCF77 protocol specification
 - ESP32 Arduino community
 - Casio multiband watch users
 - Open source IoT projects
 
-## 📝 Notatki końcowe / Final Notes
-
-Ten projekt pokazuje, jak z prostych, tanich komponentów można stworzyć
-funkcjonalne urządzenie synchronizacji czasu. Jest to doskonały projekt
-dla osób uczących się IoT, Arduino i ESP32.
+## 📝 Final Notes
 
 This project demonstrates how simple, cheap components can create a
 functional time synchronization device. It's an excellent project for
 those learning IoT, Arduino, and ESP32.
 
-**Status**: ✅ Gotowy do użycia / Ready to use
-**Wersja**: 1.0
-**Data**: 2026-02-13
-**Licencja**: MIT
+**Status**: ✅ Ready to use
+**Version**: 1.0
+**Date**: 2026-02-13
+**License**: MIT
 
 ---
 
-**Dziękujemy za korzystanie z projektu! / Thanks for using this project!** 🎉
+**Thanks for using this project!** 🎉
