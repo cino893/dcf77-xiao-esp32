@@ -179,15 +179,19 @@ void setupDCF77Output() {
   
 #ifdef DCF77_PWM_MODE
   #if DCF77_PWM_MODE
-    // Use PWM for precise amplitude control (recommended for Casio compatibility)
-    Serial.println("  Mode: PWM amplitude modulation");
-    Serial.printf("  LOW amplitude: %d (~%.1f%%)\n", DCF77_AMPLITUDE_LOW, (DCF77_AMPLITUDE_LOW / 255.0) * 100);
-    Serial.printf("  HIGH amplitude: %d (~%.1f%%)\n", DCF77_AMPLITUDE_HIGH, (DCF77_AMPLITUDE_HIGH / 255.0) * 100);
-    Serial.printf("  PWM frequency: %d Hz\n", DCF77_PWM_FREQUENCY);
+    // Use PWM to generate 77.5 kHz carrier with amplitude modulation (recommended for Casio compatibility)
+    Serial.println("  Mode: 77.5 kHz PWM carrier with amplitude modulation");
+    Serial.printf("  Carrier frequency: %d Hz (77.5 kHz)\n", DCF77_CARRIER_FREQUENCY);
+    Serial.printf("  LOW amplitude: %d (~%.1f%% duty cycle = reduced carrier)\n", DCF77_AMPLITUDE_LOW, (DCF77_AMPLITUDE_LOW / 255.0) * 100);
+    Serial.printf("  HIGH amplitude: %d (~%.1f%% duty cycle = no carrier)\n", DCF77_AMPLITUDE_HIGH, (DCF77_AMPLITUDE_HIGH / 255.0) * 100);
     
-    // Configure LEDC (LED Control) peripheral for PWM
+    // Configure LEDC (LED Control) peripheral for PWM carrier generation
     // ESP32 LEDC provides hardware PWM with 16 channels
-    ledcSetup(DCF77_PWM_CHANNEL, DCF77_PWM_FREQUENCY, 8); // 8-bit resolution (0-255)
+    // PWM at 77.5 kHz with varying duty cycle creates amplitude modulation:
+    // - 0% duty cycle = no carrier (carrier off)
+    // - 20% duty cycle = reduced amplitude carrier (for Casio AM detection)
+    // - 50% duty cycle = full amplitude carrier (square wave)
+    ledcSetup(DCF77_PWM_CHANNEL, DCF77_CARRIER_FREQUENCY, 8); // 77.5 kHz, 8-bit resolution (0-255)
     ledcAttachPin(DCF77_PIN, DCF77_PWM_CHANNEL);
     
     // Start with HIGH amplitude (carrier off)
@@ -209,7 +213,10 @@ void setupDCF77Output() {
 void setDCF77Amplitude(uint8_t amplitude) {
 #ifdef DCF77_PWM_MODE
   #if DCF77_PWM_MODE
-    // Set PWM duty cycle to control amplitude
+    // Set PWM duty cycle to control carrier amplitude
+    // 0% = no carrier (carrier off)
+    // 20% = reduced amplitude carrier (for Casio AM detection)
+    // 50% = full amplitude carrier
     ledcWrite(DCF77_PWM_CHANNEL, amplitude);
   #else
     // Legacy GPIO mode: HIGH for carrier off, LOW for carrier on
@@ -240,20 +247,20 @@ void transmitDCF77Signal() {
     unsigned long bitStart = millis();
     
     if (second == 0) {
-      // Minute marker: reduced amplitude for entire second
-      // DCF77 standard: amplitude reduction for the full second
+      // Minute marker: reduced amplitude carrier for entire second
+      // DCF77 standard: transmit reduced carrier for the full second
       setDCF77Amplitude(DCF77_AMPLITUDE_LOW);
       Serial.print("M");
     } else {
-      // Bit transmission
+      // Bit transmission with amplitude modulation
       int carrierDuration = dcf77Buffer[second] ? DCF77_CARRIER_HIGH : DCF77_CARRIER_LOW;
       
-      // Carrier on (reduced amplitude) - this is when signal is present
-      // For Casio: ~20% amplitude allows device to detect modulation
+      // Carrier on (reduced amplitude) - transmit 77.5 kHz carrier at reduced amplitude
+      // For Casio: ~20% duty cycle creates reduced amplitude carrier for AM detection
       setDCF77Amplitude(DCF77_AMPLITUDE_LOW);
       delay(carrierDuration);
       
-      // Carrier off (no amplitude) - this is when signal is absent
+      // Carrier off (no carrier) - stop transmitting carrier
       setDCF77Amplitude(DCF77_AMPLITUDE_HIGH);
       
       Serial.print(dcf77Buffer[second]);

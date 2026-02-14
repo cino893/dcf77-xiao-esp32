@@ -59,27 +59,31 @@ The following Casio models are known to work with proper amplitude modulation:
 
 **Configuration**: Set `DCF77_PWM_MODE = true` in `config.h`
 
-This mode uses ESP32's hardware PWM (LEDC peripheral) to precisely control output amplitude:
+This mode uses ESP32's hardware PWM (LEDC peripheral) to generate a 77.5 kHz carrier with amplitude modulation:
 
 ```cpp
 #define DCF77_PWM_MODE true
-#define DCF77_AMPLITUDE_LOW 51     // ~20% duty cycle (carrier on)
-#define DCF77_AMPLITUDE_HIGH 0     // 0% duty cycle (carrier off)
-#define DCF77_PWM_FREQUENCY 2000   // 2 kHz PWM frequency
+#define DCF77_AMPLITUDE_LOW 51           // ~20% duty cycle (reduced carrier)
+#define DCF77_AMPLITUDE_HIGH 0           // 0% duty cycle (no carrier)
+#define DCF77_CARRIER_FREQUENCY 77500    // 77.5 kHz carrier frequency
 ```
 
 **Advantages**:
-- Precise amplitude control
+- Generates actual 77.5 kHz carrier wave
+- Precise amplitude control via duty cycle modulation
 - Adjustable to match specific watch requirements
 - Better Casio compatibility
 - Can fine-tune for optimal reception
 
 **How it works**:
-- PWM at 2 kHz creates an average voltage level
-- Low-pass filtering by antenna circuit converts PWM to DC level
-- 20% PWM duty cycle = ~0.66V average (on 3.3V ESP32)
-- This reduced voltage drives the transistor with lower current
-- Results in ~20% amplitude modulation of the RF signal
+- PWM at 77.5 kHz generates the DCF77 carrier frequency
+- Duty cycle controls carrier amplitude (AM modulation):
+  - 0% duty cycle = no carrier (carrier off)
+  - 20% duty cycle = reduced amplitude carrier (for Casio AM detection)
+  - 50% duty cycle = full amplitude carrier (square wave)
+- During 100ms/200ms pulses: 20% duty cycle transmits reduced carrier
+- Rest of second: 0% duty cycle turns carrier completely off
+- This creates the amplitude modulation that Casio watches detect
 
 ### GPIO Mode (Legacy)
 
@@ -92,9 +96,10 @@ Simple on/off switching of GPIO pin:
 ```
 
 **Limitations**:
+- Does NOT generate 77.5 kHz carrier
 - Only two levels: full on or full off
-- May not provide the correct 20% amplitude for Casio
-- Relies entirely on hardware circuit to create amplitude difference
+- May not provide proper DCF77 signal
+- Relies entirely on antenna resonance to create RF field
 - Works with some receivers but not reliable for Casio devices
 
 ## Signal Testing and Measurement
@@ -130,26 +135,26 @@ Simple on/off switching of GPIO pin:
 Monitor the serial output during transmission:
 ```
 Configuring DCF77 output...
-  Mode: PWM amplitude modulation
-  LOW amplitude: 51 (~20.0%)
-  HIGH amplitude: 0 (~0.0%)
-  PWM frequency: 2000 Hz
+  Mode: 77.5 kHz PWM carrier with amplitude modulation
+  Carrier frequency: 77500 Hz (77.5 kHz)
+  LOW amplitude: 51 (~20.0% duty cycle = reduced carrier)
+  HIGH amplitude: 0 (~0.0% duty cycle = no carrier)
 
 Transmitting DCF77 signal...
 M0100000100 0000011000 1000100001 0001100100 0001000101 0100100
 ```
 
 - `M` = Minute marker
-- `0` = 100ms low amplitude pulse
-- `1` = 200ms low amplitude pulse
+- `0` = 100ms reduced carrier pulse
+- `1` = 200ms reduced carrier pulse
 
 ### Testing With Oscilloscope
 
 #### Setup Requirements
 
-- **Oscilloscope**: 100 kHz+ bandwidth
+- **Oscilloscope**: 100 kHz+ bandwidth (minimum - 500 kHz recommended for clear 77.5 kHz)
 - **Probe**: 10:1 probe recommended
-- **Connection**: Measure at transistor collector (antenna connection)
+- **Connection**: Measure at GPIO4 or transistor collector (antenna connection)
 
 #### Expected Waveforms
 
@@ -157,27 +162,30 @@ M0100000100 0000011000 1000100001 0001100100 0001000101 0100100
 
 **During "LOW" amplitude (100ms or 200ms pulse)**:
 ```
-Voltage at GPIO4:
-    3.3V ┐     ┌─┐     ┌─┐     ┌─┐
-        │     │ │     │ │     │ │
-    0V  └─────┘ └─────┘ └─────┘ └─  (2 kHz PWM at 20% duty)
-        └─200µs─┘
-
-Average voltage: ~0.66V
+Voltage at GPIO4 (77.5 kHz carrier at 20% duty cycle):
+    3.3V ┐  ┌┐  ┌┐  ┌┐  ┌┐  ┌┐  ┌┐  ┌┐  
+         │  ││  ││  ││  ││  ││  ││  ││  
+    0V   └──┘└──┘└──┘└──┘└──┘└──┘└──┘└──
+         └─12.9µs─┘ (77.5 kHz period)
+         
+High time: ~2.6µs (20% of 12.9µs)
+Low time: ~10.3µs (80% of 12.9µs)
+Result: Reduced amplitude 77.5 kHz carrier
 ```
 
 **During "HIGH" amplitude (rest of second)**:
 ```
 Voltage at GPIO4:
     3.3V
-        
-    0V  ──────────────────────────  (Constant 0V)
+         
+    0V  ──────────────────────────  (Constant 0V = no carrier)
 ```
 
 ##### Antenna Output
 
-The antenna will show the 77.5 kHz carrier modulated by the amplitude changes. You should see:
-- Carrier amplitude drops during 100ms/200ms pulses
+The antenna/transistor collector will show the 77.5 kHz carrier modulated by the amplitude changes:
+- During 100ms/200ms pulses: 77.5 kHz carrier at reduced amplitude (20% duty cycle)
+- Rest of second: No carrier (0V)
 - Carrier stops (or continues at full) for rest of second
 
 #### Measurements to Verify
