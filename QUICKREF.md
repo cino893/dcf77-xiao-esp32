@@ -1,35 +1,35 @@
-# Quick Reference / Szybki przewodnik
+# Quick Reference
 
-## ⚡ Szybki start / Quick Start
+## ⚡ Quick Start
 
-### 5-minutowa instalacja / 5-minute setup:
+### 5-minute setup:
 
-1. **Sklonuj repo**:
+1. **Clone repo**:
    ```bash
    git clone https://github.com/cino893/dcf77-xiao-esp32.git
    ```
 
-2. **Skonfiguruj WiFi**:
+2. **Configure WiFi**:
    ```bash
    cd dcf77-xiao-esp32
    cp config.h.example config.h
-   nano config.h  # Edytuj SSID i hasło
+   nano config.h  # Edit SSID and password
    ```
 
-3. **Wgraj kod**:
-   - Otwórz `dcf77-xiao-esp32.ino` w Arduino IDE
+3. **Upload code**:
+   - Open `dcf77-xiao-esp32.ino` in Arduino IDE
    - Tools → Board → XIAO_ESP32C3
-   - Tools → Port → [wybierz port]
+   - Tools → Port → [select port]
    - Upload (Ctrl+U)
 
-4. **Zbuduj hardware**:
-   - Zobacz schemat w [HARDWARE.md](HARDWARE.md)
-   - Połącz: GPIO4 → 1kΩ → BC547 (baza) → antena
+4. **Build hardware**:
+   - See schematic in [HARDWARE.md](HARDWARE.md)
+   - Connect: GPIO4 → 1kΩ → BC547 (base) → antenna
 
-5. **Testuj**:
-   - Połóż zegarek Casio ~20cm od anteny
-   - Ustaw na ręczną synchronizację
-   - Czekaj ~1 minutę
+5. **Test**:
+   - Place Casio watch ~20cm from antenna
+   - Set to manual sync mode
+   - Wait ~1 minute
 
 ## 📊 Pin Layout
 
@@ -58,122 +58,122 @@ XIAO ESP32C3 Pins:
 └─────────────────┘
 ```
 
-## 🔌 Połączenia / Connections
+## 🔌 Connections
 
-### Minimalna konfiguracja:
+### Minimal configuration:
 ```
 XIAO D2 (GPIO4) ──[1kΩ]── BC547 (B)
                            BC547 (E) ── GND
                            BC547 (C) ── Antena ── GND
 ```
 
-### Pełna konfiguracja z filtrowaniem:
+### Full configuration with filtering:
 ```
 XIAO 3V3 ──[100nF]── GND
 XIAO D2 ──[1kΩ]── BC547 (B)
-          [10kΩ]── GND (opcjonalnie)
+          [10kΩ]── GND (optional)
 BC547 (E) ── GND
 BC547 (C) ── Antena ── GND
 ```
 
-## 🕐 Godziny synchronizacji / Sync Hours
+## 🕐 Sync Hours
 
-Urządzenie wybudza się automatycznie:
-- **02:00** - transmisja 1h
-- **03:00** - transmisja 1h
-- **04:00** - transmisja 1h
-- **05:00** - transmisja 1h
+Device wakes up automatically:
+- **02:00** - transmission 1h
+- **03:00** - transmission 1h
+- **04:00** - transmission 1h
+- **05:00** - transmission 1h
 
-Ręczne wymuszenie: Przytrzymaj przycisk ADJUST na zegarku
+Manual trigger: Press and hold ADJUST button on watch
 
-## 📡 Parametry DCF77
+## 📡 DCF77 Parameters
 
 | Parameter | Value |
 |-----------|-------|
-| Częstotliwość / Frequency | 77.5 kHz (emulowane) |
-| Modulacja / Modulation | Amplituda / AM |
-| Bit "0" | 100ms redukcji |
-| Bit "1" | 200ms redukcji |
-| Marker minuty | 1000ms bez sygnału |
-| Zakres / Range | 5-15 metrów |
+| Frequency | 77.5 kHz (emulated) |
+| Modulation | AM |
+| Bit "0" | 100ms reduction |
+| Bit "1" | 200ms reduction |
+| Minute marker | 1000ms no signal |
+| Range | 5-15 meters |
 
-## 🔋 Pobór prądu / Power Consumption
+## 🔋 Power Consumption
 
-| Stan / State | Prąd / Current |
-|--------------|----------------|
+| State | Current |
+|-------|---------|
 | Deep Sleep | 40-50 μA |
-| WiFi aktywne | 100-180 mA |
-| Transmisja | 80-120 mA |
-| **Średnio** | **~10-20 mA** |
+| WiFi Active | 100-180 mA |
+| Transmitting | 80-120 mA |
+| **Average** | **~10-20 mA** |
 
-### Czas pracy na baterii / Battery Life:
-- **500mAh**: ~25-50 godzin (1-2 dni)
-- **1000mAh**: ~50-100 godzin (2-4 dni)
-- **2000mAh**: ~100-200 godzin (4-8 dni)
+### Battery Life:
+- **500mAh**: ~25-50 hours (1-2 days)
+- **1000mAh**: ~50-100 hours (2-4 days)
+- **2000mAh**: ~100-200 hours (4-8 days)
 
-## 🛠️ Komponenty / Parts List
+## 🛠️ Parts List
 
-### Kup na AliExpress (całość ~20-30 PLN):
+### Buy on AliExpress (total ~$6-8 USD):
 
-| Komponent | Ilość | Cena | Szukaj |
-|-----------|-------|------|--------|
-| XIAO ESP32C3 | 1 | ~15 PLN | "Seeeduino XIAO ESP32C3" |
-| BC547 NPN | 1-10 | ~1 PLN | "BC547 transistor" |
-| Rezystor 1kΩ | 1 | ~0.10 PLN | "1/4W resistor kit" |
-| Rezystor 10kΩ | 1 | ~0.10 PLN | "1/4W resistor kit" |
-| Kondensator 100nF | 1 | ~0.10 PLN | "ceramic capacitor" |
-| Pręt ferrytowy | 1 | ~5-10 PLN | "ferrite rod 10mm" |
-| Drut 0.3mm | 10m | ~5 PLN | "enameled copper wire" |
+| Component | Quantity | Price | Search |
+|-----------|----------|-------|--------|
+| XIAO ESP32C3 | 1 | ~$4 | "Seeeduino XIAO ESP32C3" |
+| BC547 NPN | 1-10 | ~$0.25 | "BC547 transistor" |
+| Resistor 1kΩ | 1 | ~$0.02 | "1/4W resistor kit" |
+| Resistor 10kΩ | 1 | ~$0.02 | "1/4W resistor kit" |
+| Capacitor 100nF | 1 | ~$0.02 | "ceramic capacitor" |
+| Ferrite rod | 1 | ~$1-2 | "ferrite rod 10mm" |
+| Wire 0.3mm | 10m | ~$1 | "enameled copper wire" |
 
-**Całość**: ~25 PLN (~6 USD)
+**Total**: ~$6-8 USD
 
-## 🧪 Szybkie testy / Quick Tests
+## 🧪 Quick Tests
 
 ### Test 1: LED Blink
 ```cpp
 // Upload: examples/simple_gpio_test/
-// Oczekiwane: LED miga 1 Hz
+// Expected: LED blinks at 1 Hz
 ```
 
 ### Test 2: WiFi
 ```cpp
 // Upload: examples/wifi_ntp_test/
-// Oczekiwane: "WiFi connected! 192.168.x.x"
+// Expected: "WiFi connected! 192.168.x.x"
 ```
 
-### Test 3: Antena
+### Test 3: Antenna
 ```
-1. Podłącz LED do GPIO4
-2. Wgraj główny kod
-3. LED miga raz/sekundę = działa ✅
-```
-
-## 📏 Wymiary anteny / Antenna Dimensions
-
-### Standardowa:
-```
-Pręt ferrytowy: 10mm (Ø) × 100mm (L)
-Zwoje: 200
-Drut: 0.3mm enameled
-Zasięg: 5-10m
+1. Connect LED to GPIO4
+2. Upload main code
+3. LED blinks once/second = working ✅
 ```
 
-### Zwiększony zasięg:
+## 📏 Antenna Dimensions
+
+### Standard:
 ```
-Pręt ferrytowy: 10mm (Ø) × 200mm (L)
-Zwoje: 300
-Drut: 0.4-0.5mm enameled
-Zasięg: 10-20m
+Ferrite rod: 10mm (Ø) × 100mm (L)
+Turns: 200
+Wire: 0.3mm enameled
+Range: 5-10m
 ```
 
-### Z wzmacniaczem MOSFET:
+### Extended range:
 ```
-Użyj IRF540N zamiast BC547
-+ wzmocnienie ~10x
-Zasięg: 20-30m
+Ferrite rod: 10mm (Ø) × 200mm (L)
+Turns: 300
+Wire: 0.4-0.5mm enameled
+Range: 10-20m
 ```
 
-## 🎯 Pozycjonowanie zegarka / Watch Positioning
+### With MOSFET amplifier:
+```
+Use IRF540N instead of BC547
++ amplification ~10x
+Range: 20-30m
+```
+
+## 🎯 Watch Positioning
 
 ```
      [Antenna]
@@ -181,71 +181,71 @@ Zasięg: 20-30m
          │ 10-30 cm
          ↓
     ┌─────────┐
-    │ Casio   │  ← Płasko / Flat
+    │ Casio   │  ← Flat
     │  Watch  │
     └─────────┘
     
-✅ DOBRZE / GOOD:
-- Płasko na stole
-- 10-30 cm od anteny
-- Obrót 0°, 90°, 180°, 270° (testuj)
+✅ GOOD:
+- Flat on table
+- 10-30 cm from antenna
+- Rotation 0°, 90°, 180°, 270° (test each)
 
-❌ ŹLE / BAD:
-- Pionowo (na boku)
-- Za daleko (>50cm)
-- Za blisko (<5cm)
-- Pod kątem
+❌ BAD:
+- Vertical (on side)
+- Too far (>50cm)
+- Too close (<5cm)
+- At an angle
 ```
 
-## 📞 Pomoc / Support
+## 📞 Support
 
-| Problem | Zobacz / See |
-|---------|--------------|
-| Nie kompiluje się | [BUILD.md](BUILD.md) |
-| Problemy z hardware | [HARDWARE.md](HARDWARE.md) |
-| Zegarek nie sync | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
-| Zaawansowane | [ADVANCED.md](ADVANCED.md) |
+| Problem | See |
+|---------|-----|
+| Won't compile | [BUILD.md](BUILD.md) |
+| Hardware issues | [HARDWARE.md](HARDWARE.md) |
+| Watch won't sync | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
+| Advanced features | [ADVANCED.md](ADVANCED.md) |
 | GitHub Issues | https://github.com/cino893/dcf77-xiao-esp32/issues |
 
-## 🔑 Kluczowe pliki / Key Files
+## 🔑 Key Files
 
 ```
 dcf77-xiao-esp32/
-├── dcf77-xiao-esp32.ino    ← Główny kod / Main code
-├── config.h                 ← Twoje WiFi / Your WiFi (nie commituj!)
+├── dcf77-xiao-esp32.ino    ← Main code
+├── config.h                 ← Your WiFi (don't commit!)
 ├── config.h.example         ← Template
-├── README.md                ← Główna dokumentacja
-├── BUILD.md                 ← Jak wgrać kod
-├── HARDWARE.md              ← Schemat i montaż
-├── TROUBLESHOOTING.md       ← Rozwiązywanie problemów
-├── ADVANCED.md              ← Zaawansowane funkcje
+├── README.md                ← Main documentation
+├── BUILD.md                 ← How to upload code
+├── HARDWARE.md              ← Schematic and assembly
+├── TROUBLESHOOTING.md       ← Problem solving
+├── ADVANCED.md              ← Advanced features
 └── examples/
-    ├── simple_gpio_test/    ← Test GPIO
-    └── wifi_ntp_test/       ← Test WiFi/NTP
+    ├── simple_gpio_test/    ← GPIO test
+    └── wifi_ntp_test/       ← WiFi/NTP test
 ```
 
-## 🎨 Status LED (opcjonalny)
+## 🎨 Status LED (optional)
 
-Dodaj LED do GPIO4 dla wizualizacji:
+Add LED to GPIO4 for visualization:
 ```
 GPIO4 ──[220Ω]──(LED)──GND
 ```
 
-Znaczenie migania:
-- **1 puls/sekundę**: Transmisja DCF77 OK ✅
-- **Brak pulsów**: Nie transmituje (sprawdź czas)
-- **Ciągłe świecenie**: Problem z kodem
+Blinking meaning:
+- **1 pulse/second**: DCF77 transmission OK ✅
+- **No pulses**: Not transmitting (check time)
+- **Continuous on**: Code problem
 
-## 🔄 Aktualizacje OTA (przyszłość)
+## 🔄 OTA Updates (future)
 
-Planowane w następnych wersjach:
+Planned for next versions:
 - Web interface (192.168.x.x)
-- WiFi AP mode dla konfiguracji
-- OTA updates (bez USB)
+- WiFi AP mode for configuration
+- OTA updates (without USB)
 - OLED display
-- Statystyki synchronizacji
+- Sync statistics
 
-## 📚 Linki / Links
+## 📚 Links
 
 - **GitHub Repo**: https://github.com/cino893/dcf77-xiao-esp32
 - **XIAO Wiki**: https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/
@@ -254,4 +254,4 @@ Planowane w następnych wersjach:
 
 ---
 
-**Miłego hackowania! / Happy hacking!** 🎉
+**Happy hacking!** 🎉
