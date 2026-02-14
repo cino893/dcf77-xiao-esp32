@@ -31,6 +31,35 @@
 // DCF77 Transmission Settings
 #define TRANSMISSION_DURATION_MINUTES 60  // How long to transmit (minutes)
 
+// DCF77 Signal Amplitude Settings
+// For Casio multiband watches compatibility:
+// - Casio devices require ~15-25% amplitude for LOW signal (carrier on)
+// - HIGH signal should be 0% (carrier off) for standard DCF77
+// 
+// PWM_MODE: true = Use PWM to generate 77.5 kHz carrier with amplitude modulation (recommended for Casio)
+//           false = Use simple GPIO on/off (legacy mode, may not work with all Casio models)
+#define DCF77_PWM_MODE true
+
+// Amplitude levels (0-255, where 255 = 100% duty cycle at 77.5 kHz)
+// LOW amplitude: Reduced carrier during 100ms/200ms pulse
+// - For Casio: 51 (~20% duty cycle of 77.5 kHz carrier = reduced amplitude)
+// - Range: 25-64 (10-25%) for best Casio compatibility
+// - Duty cycle controls amplitude: 50% = full carrier, 20% = reduced carrier for AM
+#define DCF77_AMPLITUDE_LOW 51    // ~20% duty cycle = reduced amplitude carrier
+
+// HIGH amplitude: No carrier during rest of second
+// - Standard: 0 (no carrier - carrier completely off)
+// - For full carrier mode: 128 (50% duty cycle = full amplitude carrier)
+#define DCF77_AMPLITUDE_HIGH 0    // 0% duty cycle = no carrier (carrier off)
+
+// PWM Frequency - DCF77 Carrier Frequency
+// This IS the DCF77 carrier frequency (77.5 kHz)
+// PWM at 77.5 kHz with varying duty cycle creates amplitude modulation
+// - 50% duty cycle = full amplitude carrier (square wave)
+// - 20% duty cycle = reduced amplitude carrier (for Casio compatibility)
+// - 0% duty cycle = no carrier (carrier off)
+#define DCF77_CARRIER_FREQUENCY 77500  // 77.5 kHz - DCF77 carrier frequency
+
 // Debug Settings
 #define DEBUG_MODE true  // Set to false to disable serial debug output
 

@@ -243,6 +243,79 @@ Zamiast 0.3mm użyj 0.4-0.5mm
 Mniejsza rezystancja = większy prąd = silniejsze pole
 ```
 
+#### Krok 7: Poziomy sygnału (WAŻNE dla Casio!) / Signal Levels (IMPORTANT for Casio!)
+
+**Problem: Casio potrzebuje ~20% amplitudy dla LOW sygnału**
+
+⚠️ **Najczęstsza przyczyna braku synchronizacji Casio!**
+
+Casio używa specjalnego detektora który wymaga:
+- LOW amplitude (carrier on): ~15-25% mocy
+- HIGH amplitude (carrier off): 0% mocy
+
+**Rozwiązanie: Użyj trybu PWM**
+
+##### Krok 7.1: Sprawdź konfigurację
+W pliku `config.h`:
+```cpp
+// MUSI być włączone dla Casio:
+#define DCF77_PWM_MODE true
+
+// Amplituda LOW: 20% (zalecane dla Casio)
+#define DCF77_AMPLITUDE_LOW 51    // 51/255 ≈ 20%
+
+// Amplituda HIGH: 0% (brak sygnału)
+#define DCF77_AMPLITUDE_HIGH 0
+
+// Częstotliwość PWM: 2 kHz
+#define DCF77_PWM_FREQUENCY 2000
+```
+
+##### Krok 7.2: Weryfikacja w serial monitor
+Po uruchomieniu powinno być widoczne:
+```bash
+Configuring DCF77 output...
+  Mode: PWM amplitude modulation
+  LOW amplitude: 51 (~20.0%)
+  HIGH amplitude: 0 (~0.0%)
+  PWM frequency: 2000 Hz
+```
+
+**Jeśli widać "Simple GPIO on/off (legacy)":**
+- ❌ Tryb PWM NIE jest aktywny
+- ✅ Zmień `DCF77_PWM_MODE true` w config.h
+- ✅ Wgraj kod ponownie
+
+##### Krok 7.3: Dostrajanie amplitudy
+Jeśli zegarek nadal nie synchronizuje, przetestuj różne wartości:
+
+**Dla większości Casio (zalecane):**
+```cpp
+#define DCF77_AMPLITUDE_LOW 51    // 20%
+```
+
+**Dla trudnych modeli (próbuj po kolei):**
+```cpp
+#define DCF77_AMPLITUDE_LOW 64    // 25% - spróbuj najpierw
+#define DCF77_AMPLITUDE_LOW 45    // 18%
+#define DCF77_AMPLITUDE_LOW 38    // 15%
+#define DCF77_AMPLITUDE_LOW 58    // 23%
+```
+
+**Po każdej zmianie:**
+1. Wgraj kod ponownie
+2. Sprawdź serial monitor (powinno pokazać nową wartość)
+3. Testuj przez 3-5 minut
+4. Jeśli nie działa, próbuj następnej wartości
+
+##### Krok 7.4: Test z oscyloskopem (opcjonalnie)
+Jeśli masz oscyloskop, zmierz na GPIO4:
+- Podczas LOW pulse: PWM 2kHz z ~20% duty cycle
+- Podczas HIGH: Stałe 0V
+- Czas LOW pulse: 100ms (bit 0) lub 200ms (bit 1)
+
+**Zobacz szczegóły:** [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md)
+
 ---
 
 ### 5. 🔋 Szybko rozładowuje baterię / Battery drains quickly
