@@ -57,7 +57,7 @@ Failed to connect to WiFi. Restarting...
 
 **Common mistakes:**
 - ❌ Leading/trailing spaces in SSID or password
-- ❌ Case sensitivity (case sensitive)
+- ❌ Incorrect case (credentials are case sensitive)
 - ❌ Hidden characters (copy-paste may add)
 - ❌ Incorrect password
 
