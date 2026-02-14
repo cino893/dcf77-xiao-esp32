@@ -1,278 +1,278 @@
-# Troubleshooting Guide / Przewodnik rozwiązywania problemów
+# Troubleshooting Guide
 
-## 🔍 Diagnozowanie problemów / Problem Diagnosis
+## 🔍 Problem Diagnosis
 
-### 1. ❌ Urządzenie nie uruchamia się / Device won't start
+### 1. ❌ Device won't start
 
-**Symptomy / Symptoms:**
-- Brak wyjścia na serial monitor
-- LED nie miga
-- Brak reakcji
+**Symptoms:**
+- No output on serial monitor
+- LED not blinking
+- No response
 
-**Rozwiązania / Solutions:**
+**Solutions:**
 
-#### A. Sprawdź zasilanie / Check power supply
+#### A. Check power supply
 ```bash
-# W serial monitor powinno być widoczne:
+# You should see in serial monitor:
 === DCF77 Emulator for XIAO ESP32C3 ===
 Boot count: 1
 ```
 
-**Jeśli nie widać napisu / If you don't see the text:**
-- ✅ Sprawdź kabel USB (użyj innego)
-- ✅ Sprawdź port USB komputera
-- ✅ Upewnij się, że wybrałeś właściwy port w Arduino IDE
-- ✅ Zwiększ opóźnienie po otwarciu serial monitor (2-3 sekundy)
+**If you don't see the text:**
+- ✅ Check USB cable (try another one)
+- ✅ Check computer USB port
+- ✅ Ensure you selected the correct port in Arduino IDE
+- ✅ Increase delay after opening serial monitor (2-3 seconds)
 
-#### B. Problem z wgrywaniem kodu / Upload problem
+#### B. Upload problem
 ```bash
-# Błąd: "Failed to connect to ESP32"
+# Error: "Failed to connect to ESP32"
 ```
 
-**Rozwiązanie / Solution:**
-1. Przytrzymaj przycisk BOOT na XIAO
-2. Kliknij Upload w Arduino IDE
-3. Poczekaj aż zacznie się upload
-4. Puść przycisk BOOT
+**Solution:**
+1. Hold BOOT button on XIAO
+2. Click Upload in Arduino IDE
+3. Wait until upload starts
+4. Release BOOT button
 
 ---
 
-### 2. 📡 WiFi nie łączy się / WiFi won't connect
+### 2. 📡 WiFi won't connect
 
-**Symptomy / Symptoms:**
+**Symptoms:**
 ```bash
 Connecting to WiFi: YourSSID
 ............................
 Failed to connect to WiFi. Restarting...
 ```
 
-**Rozwiązania / Solutions:**
+**Solutions:**
 
-#### A. Sprawdź credentials w config.h
+#### A. Check credentials in config.h
 ```cpp
 // config.h - MUST match EXACTLY
 #define WIFI_SSID "YourNetworkName"      // Case sensitive!
 #define WIFI_PASSWORD "YourPassword123"   // Case sensitive!
 ```
 
-**Typowe błędy / Common mistakes:**
-- ❌ Spacje na początku/końcu SSID lub hasła
-- ❌ Wielkość liter (case sensitive)
-- ❌ Ukryte znaki (skopiuj-wklej może dodać)
-- ❌ Hasło nieprawidłowe
+**Common mistakes:**
+- ❌ Leading/trailing spaces in SSID or password
+- ❌ Case sensitivity (case sensitive)
+- ❌ Hidden characters (copy-paste may add)
+- ❌ Incorrect password
 
-#### B. Sprawdź typ sieci / Check network type
-**XIAO ESP32C3 obsługuje TYLKO 2.4GHz!**
+#### B. Check network type
+**XIAO ESP32C3 supports ONLY 2.4GHz!**
 
-- ❌ Nie działa z: 5GHz, WiFi 6E
-- ✅ Działa z: 2.4GHz (802.11 b/g/n)
+- ❌ Doesn't work with: 5GHz, WiFi 6E
+- ✅ Works with: 2.4GHz (802.11 b/g/n)
 
-**Jak sprawdzić / How to check:**
-1. Na telefonie: Ustawienia → WiFi → Informacje o sieci
-2. Na routerze: Panel administracyjny
-3. Spróbuj z telefonem jako hotspot (2.4GHz)
+**How to check:**
+1. On phone: Settings → WiFi → Network info
+2. On router: Admin panel
+3. Try using phone as hotspot (2.4GHz)
 
-#### C. Problemy z zasięgiem / Range issues
+#### C. Range issues
 ```cpp
-// W setup(), dodaj logi:
+// In setup(), add logs:
 Serial.print("WiFi RSSI: ");
 Serial.println(WiFi.RSSI());
-// RSSI > -70 dBm = dobry sygnał
-// RSSI < -80 dBm = słaby, przenieś bliżej routera
+// RSSI > -70 dBm = good signal
+// RSSI < -80 dBm = weak, move closer to router
 ```
 
 ---
 
-### 3. ⏰ Czas się nie synchronizuje / Time won't sync
+### 3. ⏰ Time won't sync
 
-**Symptomy / Symptoms:**
+**Symptoms:**
 ```bash
 Synchronizing time with NTP server...
 ..........
 Failed to synchronize NTP time!
 ```
 
-**Rozwiązania / Solutions:**
+**Solutions:**
 
-#### A. Sprawdź firewall / Check firewall
-NTP używa portu UDP 123. Upewnij się że:
-- ✅ Router nie blokuje NTP
-- ✅ Firewall nie blokuje ESP32
+#### A. Check firewall
+NTP uses UDP port 123. Make sure that:
+- ✅ Router doesn't block NTP
+- ✅ Firewall doesn't block ESP32
 
-#### B. Zmień serwer NTP / Change NTP server
+#### B. Change NTP server
 ```cpp
-// W dcf77-xiao-esp32.ino, zmień:
+// In dcf77-xiao-esp32.ino, change:
 #define NTP_SERVER "time.google.com"  // Google NTP
-// lub / or
+// or
 #define NTP_SERVER "time.cloudflare.com"  // Cloudflare
-// lub lokalny / or local
-#define NTP_SERVER "192.168.1.1"  // Twój router
+// or local
+#define NTP_SERVER "192.168.1.1"  // Your router
 ```
 
-#### C. Sprawdź strefę czasową / Check timezone
+#### C. Check timezone
 ```cpp
-// Upewnij się że strefa czasowa jest poprawna:
+// Make sure timezone is correct:
 #define GMT_OFFSET_SEC 3600        // CET (UTC+1)
-#define DAYLIGHT_OFFSET_SEC 3600   // +1h w lecie
+#define DAYLIGHT_OFFSET_SEC 3600   // +1h in summer
 
-// Dla Polski / For Poland: OK ✅
-// Dla UK: 0, 3600
-// Dla USA EST: -18000, 3600
+// For Poland: OK ✅
+// For UK: 0, 3600
+// For USA EST: -18000, 3600
 ```
 
 ---
 
-### 4. 📻 Zegarek nie synchronizuje się / Watch won't sync
+### 4. 📻 Watch won't sync
 
-To najczęstszy problem! / Most common problem!
+Most common problem!
 
-**Symptomy / Symptoms:**
-- ESP32 działa, transmituje sygnał
-- Zegarek nie wykrywa sygnału
-- Synchronizacja kończy się błędem
+**Symptoms:**
+- ESP32 works, transmitting signal
+- Watch doesn't detect signal
+- Synchronization fails
 
-**Rozwiązania krok po kroku / Step-by-step solutions:**
+**Step-by-step solutions:**
 
-#### Krok 1: Sprawdź transmisję / Check transmission
-W serial monitor powinno być widoczne:
+#### Step 1: Check transmission
+You should see in serial monitor:
 ```bash
 === Transmitting DCF77 signal for 03:25 ===
 Encoded time: 03:26 13.02.2026 (Day 5)
 M0100000100 0000011000 1000100001...
 ```
 
-**Jeśli nie ma transmisji / If no transmission:**
-- Czas może być niepoprawny
-- Sprawdź minutę (musi być :00 sekundy)
+**If no transmission:**
+- Time might be incorrect
+- Check minute (must be :00 seconds)
 
-#### Krok 2: Test LED / LED Test
-Podłącz LED + rezystor 220Ω do GPIO4:
+#### Step 2: LED Test
+Connect LED + 220Ω resistor to GPIO4:
 ```
 GPIO4 ─────[220Ω]─────(LED)─────GND
 ```
 
-**LED powinno migać raz na sekundę / LED should blink once per second**
-- Jeśli nie miga: Problem z kodem lub GPIO
-- Jeśli miga: Hardware działa ✅
+**LED should blink once per second**
+- If not blinking: Problem with code or GPIO
+- If blinking: Hardware works ✅
 
-#### Krok 3: Sprawdź antenę / Check antenna
+#### Step 3: Check antenna
 
-##### A. Polarity (polaryzacja)
+##### A. Polarity
 ```bash
-# Sprawdź podłączenie:
-Kolektor Q1 → Początek cewki anteny
-Koniec cewki → GND
+# Check connection:
+Q1 Collector → Antenna coil start
+Coil end → GND
 ```
 
-**Odwrotne połączenie = brak sygnału!**
+**Reversed connection = no signal!**
 
-##### B. Liczba zwojów / Number of turns
-- Minimum: 150 zwojów
-- Optymalne: 200 zwojów  
-- Maksimum: 300 zwojów
+##### B. Number of turns
+- Minimum: 150 turns
+- Optimal: 200 turns  
+- Maximum: 300 turns
 
-**Jeśli za mało zwojów: Zasięg < 1m**
+**If too few turns: Range < 1m**
 
-##### C. Jakość nawinięcia / Winding quality
-- ❌ Zwoje luźne, nierównomierne
-- ✅ Zwoje ciasne, równomierne, środek pręta
+##### C. Winding quality
+- ❌ Loose, uneven turns
+- ✅ Tight, even turns, center of rod
 
-#### Krok 4: Pozycjonowanie zegarka / Watch positioning
+#### Step 4: Watch positioning
 
-**BARDZO WAŻNE! / VERY IMPORTANT!**
+**VERY IMPORTANT!**
 
 ```
-        [Antena ferrytowa - vertical]
+        [Ferrite antenna - vertical]
               |
               |  10-30 cm
               ↓
-        [Zegarek - płasko]
+        [Watch - flat]
         
-DOBRA orientacja ✅ / GOOD orientation:
-- Zegarek PŁASKO na stole
-- Antena PIONOWO lub POZIOMO (testuj oba)
-- Odległość 10-30 cm
+GOOD orientation ✅:
+- Watch FLAT on table
+- Antenna VERTICAL or HORIZONTAL (test both)
+- Distance 10-30 cm
 
-ZŁA orientacja ❌ / BAD orientation:
-- Zegarek pod kątem
-- Za daleko (>50cm)
-- Za blisko (<5cm - nasycenie)
+BAD orientation ❌:
+- Watch at angle
+- Too far (>50cm)
+- Too close (<5cm - saturation)
 ```
 
-**Test orientacji / Orientation test:**
-1. Połóż zegarek płasko
-2. Trzymaj antenę pionowo nad zegarkiem (~20cm)
-3. Powoli obracaj zegarek o 90° (4 pozycje)
-4. Czekaj 15-30 sekund w każdej pozycji
-5. Jedna z pozycji powinna zadziałać
+**Orientation test:**
+1. Place watch flat
+2. Hold antenna vertically above watch (~20cm)
+3. Slowly rotate watch 90° (4 positions)
+4. Wait 15-30 seconds in each position
+5. One position should work
 
-#### Krok 5: Timing (czas transmisji) / Transmission timing
+#### Step 5: Transmission timing
 
-Casio synchronizuje się TYLKO w określonych godzinach:
+Casio synchronizes ONLY at specific hours:
 - 🕑 2:00 - 3:00
 - 🕒 3:00 - 4:00
 - 🕓 4:00 - 5:00
 - 🕔 5:00 - 6:00
 
-**Poza tymi godzinami:**
-- Niektóre zegarki WYMAGAJĄ manualnej synchronizacji
-- Naciśnij i przytrzymaj przycisk ADJUST ~2 sekundy
-- Zegarek powinien wyświetlić "RCV" lub podobne
+**Outside these hours:**
+- Some watches REQUIRE manual synchronization
+- Press and hold ADJUST button ~2 seconds
+- Watch should display "RCV" or similar
 
-#### Krok 6: Wzmocnienie sygnału / Signal amplification
+#### Step 6: Signal amplification
 
-**Jeśli nadal nie działa, zwiększ moc:**
+**If still not working, increase power:**
 
-##### Opcja A: Więcej zwojów
+##### Option A: More turns
 ```bash
-Zwiększ do 250-300 zwojów
-Użyj dłuższego pręta (150-200mm)
+Increase to 250-300 turns
+Use longer rod (150-200mm)
 ```
 
-##### Opcja B: MOSFET amplifier
+##### Option B: MOSFET amplifier
 ```
-Wymień BC547 na IRF540N:
-- Gate → GPIO4 (przez 1kΩ)
+Replace BC547 with IRF540N:
+- Gate → GPIO4 (through 1kΩ)
 - Source → GND
-- Drain → Antena
+- Drain → Antenna
 ```
 
-##### Opcja C: Lepszy drut
+##### Option C: Better wire
 ```bash
-Zamiast 0.3mm użyj 0.4-0.5mm
-Mniejsza rezystancja = większy prąd = silniejsze pole
+Instead of 0.3mm use 0.4-0.5mm
+Lower resistance = higher current = stronger field
 ```
 
-#### Krok 7: Poziomy sygnału (WAŻNE dla Casio!) / Signal Levels (IMPORTANT for Casio!)
+#### Step 7: Signal Levels (IMPORTANT for Casio!)
 
-**Problem: Casio potrzebuje ~20% amplitudy dla LOW sygnału**
+**Problem: Casio needs ~20% amplitude for LOW signal**
 
-⚠️ **Najczęstsza przyczyna braku synchronizacji Casio!**
+⚠️ **Most common cause of Casio sync failure!**
 
-Casio używa specjalnego detektora który wymaga:
-- LOW amplitude (carrier on): ~15-25% mocy
-- HIGH amplitude (carrier off): 0% mocy
+Casio uses a special detector that requires:
+- LOW amplitude (carrier on): ~15-25% power
+- HIGH amplitude (carrier off): 0% power
 
-**Rozwiązanie: Użyj trybu PWM**
+**Solution: Use PWM mode**
 
-##### Krok 7.1: Sprawdź konfigurację
-W pliku `config.h`:
+##### Step 7.1: Check configuration
+In `config.h` file:
 ```cpp
-// MUSI być włączone dla Casio:
+// MUST be enabled for Casio:
 #define DCF77_PWM_MODE true
 
-// Amplituda LOW: 20% (zalecane dla Casio)
+// LOW amplitude: 20% (recommended for Casio)
 #define DCF77_AMPLITUDE_LOW 51    // 51/255 ≈ 20%
 
-// Amplituda HIGH: 0% (brak sygnału)
+// HIGH amplitude: 0% (no signal)
 #define DCF77_AMPLITUDE_HIGH 0
 
-// Częstotliwość PWM: 2 kHz
+// PWM frequency: 2 kHz
 #define DCF77_PWM_FREQUENCY 2000
 ```
 
-##### Krok 7.2: Weryfikacja w serial monitor
-Po uruchomieniu powinno być widoczne:
+##### Step 7.2: Verify in serial monitor
+After startup you should see:
 ```bash
 Configuring DCF77 output...
   Mode: PWM amplitude modulation
@@ -281,81 +281,81 @@ Configuring DCF77 output...
   PWM frequency: 2000 Hz
 ```
 
-**Jeśli widać "Simple GPIO on/off (legacy)":**
-- ❌ Tryb PWM NIE jest aktywny
-- ✅ Zmień `DCF77_PWM_MODE true` w config.h
-- ✅ Wgraj kod ponownie
+**If you see "Simple GPIO on/off (legacy)":**
+- ❌ PWM mode is NOT active
+- ✅ Change `DCF77_PWM_MODE true` in config.h
+- ✅ Upload code again
 
-##### Krok 7.3: Dostrajanie amplitudy
-Jeśli zegarek nadal nie synchronizuje, przetestuj różne wartości:
+##### Step 7.3: Fine-tune amplitude
+If watch still won't sync, test different values:
 
-**Dla większości Casio (zalecane):**
+**For most Casio (recommended):**
 ```cpp
 #define DCF77_AMPLITUDE_LOW 51    // 20%
 ```
 
-**Dla trudnych modeli (próbuj po kolei):**
+**For difficult models (try in order):**
 ```cpp
-#define DCF77_AMPLITUDE_LOW 64    // 25% - spróbuj najpierw
+#define DCF77_AMPLITUDE_LOW 64    // 25% - try first
 #define DCF77_AMPLITUDE_LOW 45    // 18%
 #define DCF77_AMPLITUDE_LOW 38    // 15%
 #define DCF77_AMPLITUDE_LOW 58    // 23%
 ```
 
-**Po każdej zmianie:**
-1. Wgraj kod ponownie
-2. Sprawdź serial monitor (powinno pokazać nową wartość)
-3. Testuj przez 3-5 minut
-4. Jeśli nie działa, próbuj następnej wartości
+**After each change:**
+1. Upload code again
+2. Check serial monitor (should show new value)
+3. Test for 3-5 minutes
+4. If doesn't work, try next value
 
-##### Krok 7.4: Test z oscyloskopem (opcjonalnie)
-Jeśli masz oscyloskop, zmierz na GPIO4:
-- Podczas LOW pulse: PWM 2kHz z ~20% duty cycle
-- Podczas HIGH: Stałe 0V
-- Czas LOW pulse: 100ms (bit 0) lub 200ms (bit 1)
+##### Step 7.4: Test with oscilloscope (optional)
+If you have an oscilloscope, measure on GPIO4:
+- During LOW pulse: 2kHz PWM with ~20% duty cycle
+- During HIGH: Constant 0V
+- LOW pulse time: 100ms (bit 0) or 200ms (bit 1)
 
-**Zobacz szczegóły:** [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md)
+**See details:** [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md)
 
 ---
 
-### 5. 🔋 Szybko rozładowuje baterię / Battery drains quickly
+### 5. 🔋 Battery drains quickly
 
-**Oczekiwane zużycie / Expected consumption:**
+**Expected consumption:**
 - Deep sleep: 40-50 μA
-- Transmisja: 80-120 mA
-- WiFi aktywne: 100-180 mA
+- Transmission: 80-120 mA
+- WiFi active: 100-180 mA
 
-**Jeśli bateria rozładowuje się w <24h:**
+**If battery drains in <24h:**
 
-#### A. Deep sleep nie działa
+#### A. Deep sleep not working
 ```cpp
-// Dodaj logi przed snem:
+// Add logs before sleep:
 Serial.println("Going to sleep...");
-Serial.flush();  // Ważne! Ensure data is sent
+Serial.flush();  // Important! Ensure data is sent
 delay(100);
 esp_deep_sleep_start();
 ```
 
-#### B. WiFi nie wyłącza się
+#### B. WiFi not turning off
 ```cpp
-// Po synchronizacji NTP, sprawdź:
+// After NTP sync, check:
 WiFi.disconnect(true);
 WiFi.mode(WIFI_OFF);
 delay(100);
 ```
 
-#### C. Zbyt częsta transmisja
+#### C. Too frequent transmission
 ```cpp
-// Zmień harmonogram (tylko 2:00-3:00):
+// Change schedule (only 2:00-3:00):
 const int SYNC_HOURS[] = {2};
 const int NUM_SYNC_HOURS = 1;
 ```
 
 ---
 
-### 6. 🐛 Inne problemy / Other issues
+### 6. 🐛 Other issues
 
-#### A. Reset loop (ciągłe restartowanie)
+#### A. Reset loop (continuous restarting)
 ```bash
 === DCF77 Emulator ===
 Boot count: 15
@@ -364,37 +364,37 @@ Boot count: 17
 ...
 ```
 
-**Przyczyny / Causes:**
-- Watchdog timeout (kod trwa za długo)
-- Problemy z pamięcią
-- Uszkodzony kod
+**Causes:**
+- Watchdog timeout (code takes too long)
+- Memory problems
+- Corrupted code
 
-**Rozwiązanie / Solution:**
+**Solution:**
 ```bash
-# Wymaż pamięć flash:
+# Erase flash memory:
 python -m esptool --port /dev/ttyUSB0 erase_flash
 
-# Wgraj kod ponownie
+# Upload code again
 ```
 
-#### B. Serial monitor pokazuje śmieci
+#### B. Serial monitor shows garbage
 ```bash
 ÿþý����������
 ```
 
-**Rozwiązanie / Solution:**
-1. Ustaw baud rate: **115200**
-2. Sprawdź USB CDC On Boot: **Enabled**
-3. Naciśnij reset na XIAO
-4. Otwórz serial monitor ZARAZ po resecie
+**Solution:**
+1. Set baud rate: **115200**
+2. Check USB CDC On Boot: **Enabled**
+3. Press reset on XIAO
+4. Open serial monitor IMMEDIATELY after reset
 
 ---
 
-## 🧪 Testy diagnostyczne / Diagnostic Tests
+## 🧪 Diagnostic Tests
 
-### Test 1: Podstawowy / Basic Test
+### Test 1: Basic Test
 ```cpp
-// Prosty test GPIO:
+// Simple GPIO test:
 void setup() {
   pinMode(4, OUTPUT);
 }
@@ -405,7 +405,7 @@ void loop() {
   digitalWrite(4, LOW);
   delay(500);
 }
-// LED powinno migać 1Hz
+// LED should blink at 1Hz
 ```
 
 ### Test 2: WiFi Test
@@ -437,21 +437,21 @@ void setup() {
 
 ---
 
-## 📞 Dalsze wsparcie / Further Support
+## 📞 Further Support
 
-Jeśli żaden z powyższych kroków nie pomógł:
+If none of the above steps helped:
 
 1. **GitHub Issues**: https://github.com/cino893/dcf77-xiao-esp32/issues
-2. **Dołącz**:
-   - Logi z serial monitor (cały output)
-   - Model zegarka Casio
-   - Zdjęcie anteny i połączeń
-   - Kod `config.h` (BEZ hasła WiFi!)
-3. **Opisz szczegółowo**:
-   - Co próbowałeś
-   - Kiedy problem występuje
-   - Jakie kroki wykonałeś
+2. **Include**:
+   - Logs from serial monitor (full output)
+   - Casio watch model
+   - Photo of antenna and connections
+   - `config.h` code (WITHOUT WiFi password!)
+3. **Describe in detail**:
+   - What you tried
+   - When the problem occurs
+   - What steps you followed
 
 ---
 
-**Powodzenia! / Good luck!** 🍀
+**Good luck!** 🍀
