@@ -8,7 +8,7 @@ Creating a complete Arduino repository for **Xiao ESP32 C3** that:
 - ✅ Emits DCF77 signal on pins
 - ✅ Achieves minimum 5 meter range
 - ✅ Uses simple, cheap components from AliExpress (~$5-8)
-- ✅ Contains complete documentation in both Polish and English
+- ✅ Contains complete documentation in English
 
 ## 📦 Repository Contents
 
@@ -21,9 +21,9 @@ config.h                  - Local configuration (not committed)
 
 ### Documentation
 ```
-README.md                 - Main documentation (PL/EN, 250+ lines)
+README.md                 - Main documentation (250+ lines)
 HARDWARE.md               - Schematic and components (200+ lines)
-BUILD.MD                  - Build and upload instructions (300+ lines)
+BUILD.md                  - Build and upload instructions (300+ lines)
 TROUBLESHOOTING.md        - Troubleshooting guide (300+ lines)
 ADVANCED.md               - Advanced features (200+ lines)
 QUICKREF.md               - Quick reference guide (200+ lines)
