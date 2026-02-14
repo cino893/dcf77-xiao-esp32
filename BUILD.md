@@ -1,18 +1,18 @@
-# Build and Upload Guide / Przewodnik kompilacji i wgrywania
+# Build and Upload Guide
 
-## 🔧 Przygotowanie środowiska / Environment Setup
+## 🔧 Environment Setup
 
-### Krok 1: Zainstaluj Arduino IDE
+### Step 1: Install Arduino IDE
 
 #### Windows:
-1. Pobierz z https://www.arduino.cc/en/software
-2. Wybierz "Windows Win 10 and newer"
-3. Zainstaluj (zalecane: Install for All Users)
+1. Download from https://www.arduino.cc/en/software
+2. Select "Windows Win 10 and newer"
+3. Install (recommended: Install for All Users)
 
 #### macOS:
-1. Pobierz z https://www.arduino.cc/en/software
-2. Wybierz "macOS"
-3. Przeciągnij do folderu Applications
+1. Download from https://www.arduino.cc/en/software
+2. Select "macOS"
+3. Drag to Applications folder
 
 #### Linux:
 ```bash
@@ -20,116 +20,116 @@
 sudo apt update
 sudo apt install arduino
 
-# Lub pobierz najnowszą wersję:
+# Or download the latest version:
 wget https://downloads.arduino.cc/arduino-ide/arduino-ide_latest_Linux_64bit.AppImage
 chmod +x arduino-ide_*_Linux_64bit.AppImage
 ./arduino-ide_*_Linux_64bit.AppImage
 ```
 
-### Krok 2: Dodaj obsługę ESP32
+### Step 2: Add ESP32 Support
 
-1. **Otwórz Arduino IDE**
+1. **Open Arduino IDE**
 
-2. **Dodaj URL do Board Manager**:
+2. **Add URL to Board Manager**:
    - **Arduino IDE 2.x**: File → Preferences → Additional boards manager URLs
    - **Arduino IDE 1.x**: File → Preferences → Additional Boards Manager URLs
    
-   Dodaj:
+   Add:
    ```
    https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
    ```
 
-3. **Zainstaluj ESP32 Board Package**:
+3. **Install ESP32 Board Package**:
    - Tools → Board → Boards Manager
-   - Wyszukaj: "esp32"
-   - Znajdź "esp32 by Espressif Systems"
-   - Kliknij "Install" (może potrwać kilka minut)
+   - Search: "esp32"
+   - Find "esp32 by Espressif Systems"
+   - Click "Install" (may take a few minutes)
 
-### Krok 3: Skonfiguruj XIAO ESP32C3
+### Step 3: Configure XIAO ESP32C3
 
-1. **Podłącz XIAO ESP32C3 do USB**
-   - Użyj dobrego kabla USB-C (z transmisją danych)
-   - Poczekaj na wykrycie urządzenia
+1. **Connect XIAO ESP32C3 to USB**
+   - Use a good USB-C cable (with data transmission)
+   - Wait for device detection
 
-2. **Wybierz płytkę**:
+2. **Select board**:
    - Tools → Board → ESP32 Arduino → **XIAO_ESP32C3**
 
-3. **Wybierz port**:
-   - Tools → Port → Wybierz odpowiedni port
-   - **Windows**: COM3, COM4, itp.
+3. **Select port**:
+   - Tools → Port → Select appropriate port
+   - **Windows**: COM3, COM4, etc.
    - **macOS**: /dev/cu.usbmodem*
    - **Linux**: /dev/ttyACM0, /dev/ttyUSB0
 
-4. **Konfiguracja dodatkowych opcji**:
-   - Tools → Upload Speed → **921600** (najszybsze)
-   - Tools → USB CDC On Boot → **Enabled** (dla Serial Monitor)
-   - Tools → CPU Frequency → **160MHz** (domyślne)
-   - Tools → Flash Size → **4MB** (domyślne)
+4. **Configure additional options**:
+   - Tools → Upload Speed → **921600** (fastest)
+   - Tools → USB CDC On Boot → **Enabled** (for Serial Monitor)
+   - Tools → CPU Frequency → **160MHz** (default)
+   - Tools → Flash Size → **4MB** (default)
    - Tools → Partition Scheme → **Default 4MB**
 
-## 📥 Pobieranie projektu / Downloading the Project
+## 📥 Downloading the Project
 
-### Opcja A: Git Clone (zalecane)
+### Option A: Git Clone (recommended)
 ```bash
 git clone https://github.com/cino893/dcf77-xiao-esp32.git
 cd dcf77-xiao-esp32
 ```
 
-### Opcja B: Download ZIP
-1. Idź do https://github.com/cino893/dcf77-xiao-esp32
-2. Kliknij "Code" → "Download ZIP"
-3. Rozpakuj do katalogu `dcf77-xiao-esp32`
+### Option B: Download ZIP
+1. Go to https://github.com/cino893/dcf77-xiao-esp32
+2. Click "Code" → "Download ZIP"
+3. Extract to directory `dcf77-xiao-esp32`
 
-## ⚙️ Konfiguracja / Configuration
+## ⚙️ Configuration
 
-### Krok 1: Kopiuj config.h
+### Step 1: Copy config.h
 ```bash
-# W katalogu projektu:
+# In project directory:
 cp config.h.example config.h
 ```
 
-### Krok 2: Edytuj config.h
-Otwórz `config.h` w edytorze tekstu i ustaw swoje dane WiFi:
+### Step 2: Edit config.h
+Open `config.h` in a text editor and set your WiFi credentials:
 
 ```cpp
-#define WIFI_SSID "TwojSSID"           // Nazwa sieci WiFi (2.4GHz!)
-#define WIFI_PASSWORD "TwojeHaslo"     // Hasło do WiFi
+#define WIFI_SSID "YourSSID"           // WiFi network name (2.4GHz!)
+#define WIFI_PASSWORD "YourPassword"   // WiFi password
 ```
 
-**⚠️ WAŻNE:**
-- WiFi MUSI być 2.4GHz (ESP32C3 nie obsługuje 5GHz)
-- SSID i hasło są case-sensitive (wielkość liter ma znaczenie)
-- Nie commituj config.h z prawdziwymi danymi do GitHuba
+**⚠️ IMPORTANT:**
+- WiFi MUST be 2.4GHz (ESP32C3 does not support 5GHz)
+- SSID and password are case-sensitive
+- Do not commit config.h with real credentials to GitHub
 
-## 🔨 Kompilacja i wgrywanie / Compile and Upload
+## 🔨 Compile and Upload
 
-### Metoda 1: Arduino IDE (GUI)
+### Method 1: Arduino IDE (GUI)
 
-1. **Otwórz projekt**:
+1. **Open project**:
    - File → Open
-   - Wybierz `dcf77-xiao-esp32.ino`
+   - Select `dcf77-xiao-esp32.ino`
 
-2. **Sprawdź kod** (opcjonalnie):
+2. **Verify code** (optional):
    - Sketch → Verify/Compile (Ctrl+R / Cmd+R)
-   - Poczekaj na komunikat "Done compiling"
+   - Wait for "Done compiling" message
 
-3. **Wgraj kod**:
+3. **Upload code**:
    - Sketch → Upload (Ctrl+U / Cmd+U)
-   - Obserwuj postęp w dolnej części okna
+   - Observe progress at bottom of window
    
-   **Jeśli występuje błąd połączenia:**
-   1. Przytrzymaj przycisk **BOOT** na XIAO
-   2. Kliknij Upload
-   3. Puść BOOT gdy zacznie się wgrywanie
+   **If connection error occurs:**
+   1. Hold **BOOT** button on XIAO
+   2. Click Upload
+   3. Release BOOT when upload starts
 
-4. **Otwórz Serial Monitor**:
+4. **Open Serial Monitor**:
    - Tools → Serial Monitor (Ctrl+Shift+M)
-   - Ustaw baud rate: **115200**
-   - Powinieneś zobaczyć logi startowe
+   - Set baud rate: **115200**
+   - You should see startup logs
 
-### Metoda 2: Arduino CLI (zaawansowane)
+### Method 2: Arduino CLI (advanced)
 
-#### Instalacja Arduino CLI:
+#### Install Arduino CLI:
 ```bash
 # Linux/macOS
 curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
@@ -138,68 +138,68 @@ curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.
 iwr -useb https://raw.githubusercontent.com/arduino/arduino-cli/master/install.ps1 | iex
 ```
 
-#### Konfiguracja:
+#### Configuration:
 ```bash
-# Inicjalizacja
+# Initialize
 arduino-cli config init
 
-# Dodaj URL ESP32
+# Add ESP32 URL
 arduino-cli config add board_manager.additional_urls https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 
-# Aktualizuj index
+# Update index
 arduino-cli core update-index
 
-# Zainstaluj ESP32
+# Install ESP32
 arduino-cli core install esp32:esp32
 ```
 
-#### Kompilacja:
+#### Compile:
 ```bash
 cd dcf77-xiao-esp32
 arduino-cli compile --fqbn esp32:esp32:XIAO_ESP32C3 dcf77-xiao-esp32.ino
 ```
 
-#### Wgrywanie:
+#### Upload:
 ```bash
-# Sprawdź port
+# Check port
 arduino-cli board list
 
-# Wgraj (zastąp PORT odpowiednią wartością)
+# Upload (replace PORT with appropriate value)
 arduino-cli upload -p /dev/ttyACM0 --fqbn esp32:esp32:XIAO_ESP32C3 dcf77-xiao-esp32.ino
 ```
 
-#### Monitor serial:
+#### Serial monitor:
 ```bash
 arduino-cli monitor -p /dev/ttyACM0 -c baudrate=115200
 ```
 
-## 🧪 Testowanie / Testing
+## 🧪 Testing
 
-### Test 1: Podstawowy test GPIO
+### Test 1: Basic GPIO Test
 ```bash
-# Otwórz i wgraj:
+# Open and upload:
 examples/simple_gpio_test/simple_gpio_test.ino
 ```
-**Oczekiwany wynik**: LED miga raz na sekundę
+**Expected result**: LED blinks once per second
 
-### Test 2: Test WiFi i NTP
+### Test 2: WiFi and NTP Test
 ```bash
-# Edytuj WiFi credentials w pliku
-# Następnie otwórz i wgraj:
+# Edit WiFi credentials in the file
+# Then open and upload:
 examples/wifi_ntp_test/wifi_ntp_test.ino
 ```
-**Oczekiwany wynik**: Połączenie z WiFi i wyświetlenie czasu
+**Expected result**: WiFi connection and time display
 
-### Test 3: Pełny DCF77
+### Test 3: Full DCF77
 ```bash
-# Wgraj główny sketch
+# Upload main sketch
 dcf77-xiao-esp32.ino
 ```
-**Oczekiwany wynik**: Zobacz "Logi oczekiwane" poniżej
+**Expected result**: See "Expected Logs" below
 
-## 📊 Logi oczekiwane / Expected Logs
+## 📊 Expected Logs
 
-### Prawidłowe uruchomienie:
+### Successful startup:
 ```
 === DCF77 Emulator for XIAO ESP32C3 ===
 Boot count: 1
@@ -218,7 +218,7 @@ Encoded time: 14:25 13.02.2026 (Day 4)
 M0100000100 0000011000 1000100001 0001100100 0001000101 0100100
 ```
 
-### Błędy i rozwiązania:
+### Errors and solutions:
 
 #### "Failed to connect to WiFi"
 ```
@@ -226,7 +226,7 @@ Connecting to WiFi: YourSSID
 ..............................
 Failed to connect to WiFi. Restarting...
 ```
-**Rozwiązanie**: Sprawdź SSID, hasło i czy WiFi to 2.4GHz
+**Solution**: Check SSID, password and that WiFi is 2.4GHz
 
 #### "Failed to synchronize NTP time"
 ```
@@ -234,99 +234,99 @@ Synchronizing time with NTP server...
 ..........
 Failed to synchronize NTP time!
 ```
-**Rozwiązanie**: Sprawdź firewall, router, spróbuj innego serwera NTP
+**Solution**: Check firewall, router, try different NTP server
 
-## 🐛 Rozwiązywanie problemów kompilacji / Build Troubleshooting
+## 🐛 Build Troubleshooting
 
-### Błąd: "Board not found"
+### Error: "Board not found"
 ```
 Error: Board esp32:esp32:XIAO_ESP32C3 is unknown
 ```
-**Rozwiązanie**: 
-1. Sprawdź czy zainstalowałeś ESP32 board package
-2. Zrestartuj Arduino IDE
-3. Spróbuj ponownie zainstalować ESP32
+**Solution**: 
+1. Check if you installed ESP32 board package
+2. Restart Arduino IDE
+3. Try reinstalling ESP32
 
-### Błąd: "Port not found"
+### Error: "Port not found"
 ```
 Error: port not found
 ```
-**Rozwiązanie**:
-1. Sprawdź czy kabel USB transmituje dane (nie tylko zasilanie)
-2. Zainstaluj sterowniki USB-Serial (Windows)
-3. Sprawdź Device Manager (Windows) lub dmesg (Linux)
+**Solution**:
+1. Check if USB cable transmits data (not just power)
+2. Install USB-Serial drivers (Windows)
+3. Check Device Manager (Windows) or dmesg (Linux)
 
-### Błąd: "Timeout waiting for packet"
+### Error: "Timeout waiting for packet"
 ```
 A fatal error occurred: Failed to connect to ESP32
 ```
-**Rozwiązanie**:
-1. **Metoda 1**: Przytrzymaj BOOT podczas uploadu
-2. **Metoda 2**: Obniż Upload Speed (do 115200)
-3. **Metoda 3**: Naciśnij RESET przed uploadem
+**Solution**:
+1. **Method 1**: Hold BOOT during upload
+2. **Method 2**: Lower Upload Speed (to 115200)
+3. **Method 3**: Press RESET before upload
 
-### Błąd: "Not enough space"
+### Error: "Not enough space"
 ```
 Sketch uses 1450000 bytes (110%) of program storage
 ```
-**Rozwiązanie**: Nie powinno się zdarzyć z tym projektem. Sprawdź czy:
-1. Wybrałeś właściwą płytkę (XIAO_ESP32C3)
-2. Flash Size ustawiony na 4MB
+**Solution**: Should not happen with this project. Check if:
+1. Selected correct board (XIAO_ESP32C3)
+2. Flash Size set to 4MB
 
-### Błąd: "config.h: No such file"
+### Error: "config.h: No such file"
 ```
 dcf77-xiao-esp32.ino:15:10: fatal error: config.h: No such file or directory
 ```
-**Rozwiązanie**:
+**Solution**:
 ```bash
 cp config.h.example config.h
-# Następnie edytuj config.h
+# Then edit config.h
 ```
 
-## 📝 Checklist przed wgraniem / Pre-Upload Checklist
+## 📝 Pre-Upload Checklist
 
-- [ ] Arduino IDE zainstalowane z obsługą ESP32
-- [ ] XIAO ESP32C3 podłączone przez USB
-- [ ] Właściwy board wybrany (XIAO_ESP32C3)
-- [ ] Właściwy port wybrany
-- [ ] config.h istnieje i zawiera prawidłowe dane WiFi
-- [ ] WiFi to 2.4GHz (nie 5GHz)
-- [ ] Serial Monitor ustawiony na 115200 baud
-- [ ] USB CDC On Boot włączone (Enabled)
+- [ ] Arduino IDE installed with ESP32 support
+- [ ] XIAO ESP32C3 connected via USB
+- [ ] Correct board selected (XIAO_ESP32C3)
+- [ ] Correct port selected
+- [ ] config.h exists and contains valid WiFi credentials
+- [ ] WiFi is 2.4GHz (not 5GHz)
+- [ ] Serial Monitor set to 115200 baud
+- [ ] USB CDC On Boot enabled
 
-## 🔄 Aktualizacje / Updates
+## 🔄 Updates
 
-### Aktualizacja kodu z Git:
+### Update code from Git:
 ```bash
 cd dcf77-xiao-esp32
 git pull origin main
 ```
 
-### Aktualizacja ESP32 Core:
+### Update ESP32 Core:
 1. Tools → Board → Boards Manager
-2. Znajdź "esp32"
-3. Kliknij "Update" jeśli dostępne
+2. Find "esp32"
+3. Click "Update" if available
 
-## 💾 Backup konfiguracji / Configuration Backup
+## 💾 Configuration Backup
 
-**WAŻNE**: Przed aktualizacją zrób kopię swojego `config.h`:
+**IMPORTANT**: Before updating, backup your `config.h`:
 ```bash
 cp config.h config.h.backup
 ```
 
-Po aktualizacji:
+After update:
 ```bash
-# Jeśli config.h został nadpisany:
+# If config.h was overwritten:
 cp config.h.backup config.h
 ```
 
-## 🎯 Następne kroki / Next Steps
+## 🎯 Next Steps
 
-Po udanym wgraniu:
-1. Przejdź do [HARDWARE.md](HARDWARE.md) - montaż obwodu
-2. Przejdź do [README.md](README.md) - użytkowanie
-3. W razie problemów: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+After successful upload:
+1. Go to [HARDWARE.md](HARDWARE.md) - circuit assembly
+2. Go to [README.md](README.md) - usage
+3. In case of problems: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
 ---
 
-**Powodzenia z wgrywaniem! / Good luck with uploading!** 🚀
+**Good luck with uploading!** 🚀
