@@ -1,34 +1,34 @@
-# Schemat Hardware / Hardware Schematic
+# Hardware Schematic
 
-## Komponenty / Components
+## Components
 
-### Podstawowe / Essential:
-1. **Seeed Studio XIAO ESP32C3** - główny mikrokontroler / main microcontroller
-   - ~15 PLN / ~3.5 USD na AliExpress
-2. **Tranzystor NPN (BC547 lub 2N2222)** - wzmacniacz sygnału / signal amplifier
-   - ~0.10 PLN / ~0.02 USD
-3. **Rezystor 1kΩ** - ograniczenie prądu bazy tranzystora / base current limiter
-   - ~0.05 PLN / ~0.01 USD
-4. **Rezystor 10kΩ** - pull-down / pull-down resistor
-   - ~0.05 PLN / ~0.01 USD
-5. **Cewka ferrytowa (ferrite rod antenna) 77.5kHz** - antena nadawcza / transmit antenna
-   - Można użyć / Can use:
-     - Ferrite rod 10mm x 100mm z drutem nawojowym / with wire coil
-     - ~200 zwojów drutu / ~200 turns of wire (0.3mm)
-     - Lub gotowa antena AM / Or ready AM antenna
-   - ~5-20 PLN / ~1-5 USD na AliExpress
-6. **Kondensator 100nF** - filtrowanie zasilania / power filtering
-   - ~0.10 PLN / ~0.02 USD
+### Essential:
+1. **Seeed Studio XIAO ESP32C3** - main microcontroller
+   - ~3.5 USD on AliExpress
+2. **NPN Transistor (BC547 or 2N2222)** - signal amplifier
+   - ~0.02 USD
+3. **1kΩ Resistor** - base current limiter
+   - ~0.01 USD
+4. **10kΩ Resistor** - pull-down resistor
+   - ~0.01 USD
+5. **Ferrite rod antenna 77.5kHz** - transmit antenna
+   - Can use:
+     - Ferrite rod 10mm x 100mm with wire coil
+     - ~200 turns of wire (0.3mm)
+     - Or ready AM antenna
+   - ~1-5 USD on AliExpress
+6. **100nF Capacitor** - power filtering
+   - ~0.02 USD
 
-### Opcjonalne dla większego zasięgu / Optional for extended range:
-7. **Wzmacniacz MOSFET (IRF540N)** - większa moc wyjściowa / higher output power
-   - ~2 PLN / ~0.50 USD
-8. **Rezonator kwarcowy 77.5kHz** - dokładniejsza częstotliwość / more accurate frequency
-   - ~10-20 PLN / ~2-5 USD
+### Optional for extended range:
+7. **MOSFET Amplifier (IRF540N)** - higher output power
+   - ~0.50 USD
+8. **77.5kHz Crystal Resonator** - more accurate frequency
+   - ~2-5 USD
 
-## Schemat połączeń / Circuit Diagram
+## Circuit Diagram
 
-### Podstawowy układ / Basic Circuit:
+### Basic Circuit:
 
 ```
                                     +3.3V
@@ -50,119 +50,117 @@
                          [C1]          │
                         100nF          │
                           │            │
-                         GND        [ANTENA]
+                         GND        [ANTENNA]
                                    Ferrite coil
-                                   ~200 zwojów
-                                   0.3mm drut
+                                   ~200 turns
+                                   0.3mm wire
                                       │
                                      GND
 
-R1 = 1kΩ (rezystor bazy / base resistor)
+R1 = 1kΩ (base resistor)
 R2 = 10kΩ (pull-down resistor)
-C1 = 100nF (kondensator filtrujący / filter capacitor)
-Q1 = BC547 lub 2N2222 (tranzystor NPN / NPN transistor)
+C1 = 100nF (filter capacitor)
+Q1 = BC547 or 2N2222 (NPN transistor)
 ```
 
-### Opis działania / How it works:
+### How it works:
 
-1. **Pin D2 (GPIO4)** emituje sygnał DCF77 (modulacja amplitudy)
-   - HIGH = pełna moc nadawania / full transmission power
-   - LOW = zredukowana moc (symulacja nośnej) / reduced power (carrier simulation)
+1. **Pin D2 (GPIO4)** emits the DCF77 signal (amplitude modulation)
+   - HIGH = full transmission power
+   - LOW = reduced power (carrier simulation)
 
-2. **Tranzystor Q1** wzmacnia sygnał:
-   - Kiedy GPIO4 = HIGH → tranzystor przewodzi → prąd płynie przez antenę
-   - Kiedy GPIO4 = LOW → tranzystor zatkany → brak prądu w antenie
+2. **Transistor Q1** amplifies the signal:
+   - When GPIO4 = HIGH → transistor conducts → current flows through antenna
+   - When GPIO4 = LOW → transistor off → no current in antenna
 
-3. **Antena ferrytowa** emituje pole magnetyczne:
-   - Modulowane pole magnetyczne na częstotliwości ~77.5kHz
-   - Zasięg: 5-10 metrów (zależy od anteny)
+3. **Ferrite antenna** emits magnetic field:
+   - Modulated magnetic field at ~77.5kHz frequency
+   - Range: 5-10 meters (depends on antenna)
 
-## Montaż anteny / Antenna Assembly
+## Antenna Assembly
 
-### Opcja 1: Własna antena / DIY Antenna
+### Option 1: DIY Antenna
 ```
-Ferrite rod (pręt ferrytowy)
-10mm średnica × 100mm długość
+Ferrite rod
+10mm diameter × 100mm length
 
     ╔═══════════════════════════════════╗
-    ║  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ║  ← 200 zwojów drutu 0.3mm
-    ║  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ║     200 turns of 0.3mm wire
+    ║  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ║  ← 200 turns of 0.3mm wire
+    ║  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ║
     ╚═══════════════════════════════════╝
 
-    └── Początek cewki do kolektora Q1
-        Start of coil to Q1 collector
+    └── Start of coil to Q1 collector
     
-    └── Koniec cewki do GND
-        End of coil to GND
+    └── End of coil to GND
 ```
 
-Parametry:
-- Drut: 0.3mm emaliowany / enameled
-- Zwoje: ~200 (eksperymentuj 150-250)
-- Indukcyjność: ~2-5 mH
-- Nawój równomiernie na środkowej części pręta
+Parameters:
+- Wire: 0.3mm enameled
+- Turns: ~200 (experiment with 150-250)
+- Inductance: ~2-5 mH
+- Wind evenly on the middle section of the rod
 
-### Opcja 2: Gotowa antena AM / Ready AM Antenna
-- Użyj anteny z radia AM/MW
-- Częstotliwość rezonansowa ~500-1600kHz jest OK
-- Zasięg może być większy
+### Option 2: Ready AM Antenna
+- Use antenna from AM/MW radio
+- Resonant frequency ~500-1600kHz is OK
+- Range may be greater
 
-## Zasilanie / Power Supply
+## Power Supply
 
-**Ważne!** XIAO ESP32C3 wymaga stabilnego 3.3V lub 5V (USB):
+**Important!** XIAO ESP32C3 requires stable 3.3V or 5V (USB):
 
-1. **USB (5V)** - najprostsze, przez port USB-C
-2. **Bateria Li-Po 3.7V** - dla trybu przenośnego
-   - Połącz do pinów BAT+ i BAT-
-   - XIAO ma wbudowaną ładowarkę
-3. **Zasilacz 5V** - przez pin 5V
+1. **USB (5V)** - simplest, via USB-C port
+2. **Li-Po Battery 3.7V** - for portable mode
+   - Connect to BAT+ and BAT- pins
+   - XIAO has built-in charger
+3. **5V Power Supply** - via 5V pin
 
-### Pobór prądu / Power Consumption:
-- Aktywny (WiFi ON): ~100-180mA
-- Nadawanie (WiFi OFF): ~80-120mA  
+### Power Consumption:
+- Active (WiFi ON): ~100-180mA
+- Transmitting (WiFi OFF): ~80-120mA  
 - Deep Sleep: ~40-50μA
-- Średnio: ~10-20mA (z deep sleep)
+- Average: ~10-20mA (with deep sleep)
 
-## Zasięg / Range
+## Range
 
-Oczekiwany zasięg / Expected range:
-- **Podstawowy układ**: 3-7 metrów
-- **Z lepszą anteną**: 5-15 metrów
-- **Z wzmacniaczem MOSFET**: 10-30 metrów
+Expected range:
+- **Basic circuit**: 3-7 meters
+- **With better antenna**: 5-15 meters
+- **With MOSFET amplifier**: 10-30 meters
 
-Czynniki wpływające na zasięg / Range factors:
-- Jakość anteny / antenna quality
-- Orientacja anteny względem zegarka / antenna orientation to watch
-- Metalowe przedmioty w pobliżu / metal objects nearby
-- Siła sygnału (prąd kolektora) / signal strength
+Range factors:
+- Antenna quality
+- Antenna orientation to watch
+- Metal objects nearby
+- Signal strength (collector current)
 
-## Debugowanie / Debugging
+## Debugging
 
-### Test LED:
-Możesz dodać LED do monitorowania sygnału:
+### LED Test:
+You can add an LED to monitor the signal:
 
 ```
 GPIO4 ────[220Ω]────(LED)────GND
 ```
 
-LED będzie migać zgodnie z sygnałem DCF77 (1 puls/sekundę).
+The LED will blink according to the DCF77 signal (1 pulse/second).
 
-## Uwagi bezpieczeństwa / Safety Notes
+## Safety Notes
 
-⚠️ **Ważne:**
-- Nie przekraczaj 100mW mocy nadawczej (regulacje)
-- Używaj tylko do celów osobistych (synchronizacja własnych zegarków)
-- Nie zakłócaj innych urządzeń
-- Zachowaj odstępy bezpieczne od anteny (>10cm)
+⚠️ **Important:**
+- Do not exceed 100mW transmit power (regulations)
+- Use only for personal purposes (synchronizing your own watches)
+- Do not interfere with other devices
+- Keep safe distance from antenna (>10cm)
 
-## Lista zakupów na AliExpress / AliExpress Shopping List
+## AliExpress Shopping List
 
-Szukaj / Search for:
-1. "XIAO ESP32C3" lub "Seeeduino XIAO ESP32C3"
-2. "BC547 transistor NPN" lub "2N2222"
-3. "Ferrite rod antenna" lub "AM antenna ferrite rod"
+Search for:
+1. "XIAO ESP32C3" or "Seeeduino XIAO ESP32C3"
+2. "BC547 transistor NPN" or "2N2222"
+3. "Ferrite rod antenna" or "AM antenna ferrite rod"
 4. "Resistor kit 1/4W"
 5. "Ceramic capacitor kit"
 6. "0.3mm enameled copper wire"
 
-Całkowity koszt: ~20-30 PLN (~5-8 USD)
+Total cost: ~5-8 USD
