@@ -1,212 +1,211 @@
-# Dodatkowe informacje / Additional Information
+# Advanced Features
 
-## 🎯 Jak działa DCF77 / How DCF77 Works
+## 🎯 How DCF77 Works
 
-DCF77 to system czasu radiowego nadawany z Mainflingen w Niemczech na częstotliwości 77.5 kHz. Sygnał składa się z:
+DCF77 is a radio time signal transmitted from Mainflingen, Germany on 77.5 kHz frequency. The signal consists of:
 
-- **Nośna 77.5 kHz**: Ciągła fala radiowa
-- **Modulacja amplitudy**: Redukcja mocy o 85% koduje bity
+- **77.5 kHz carrier**: Continuous radio wave
+- **Amplitude modulation**: 85% power reduction encodes bits
 - **Bit timing**: 
-  - Bit "0": 100ms redukcji mocy
-  - Bit "1": 200ms redukcji mocy
-  - Marker minuty: brak nośnej przez całą sekundę
-- **Format danych**: BCD (Binary Coded Decimal)
-- **60 bitów/minutę**: Kompletna informacja o czasie
+  - Bit "0": 100ms power reduction
+  - Bit "1": 200ms power reduction
+  - Minute marker: no carrier for entire second
+- **Data format**: BCD (Binary Coded Decimal)
+- **60 bits/minute**: Complete time information
 
-### Kodowanie czasu / Time Encoding
+### Time Encoding
 
 ```
-Bit 0:    Marker minuty (zawsze 0)
-Bit 1-14: Informacje meteorologiczne i ostrzeżenia
-Bit 15:   Bit wywołania
-Bit 16:   Zapowiedź zmiany czasu
-Bit 17:   CEST (czas letni)
-Bit 18:   CET (czas standardowy)
-Bit 19:   Sekunda przestępna
-Bit 20:   Start kodowania czasu (zawsze 1)
-Bit 21-27: Minuty (BCD)
-Bit 28:   Parzystość minut
-Bit 29-34: Godziny (BCD)
-Bit 35:   Parzystość godzin
-Bit 36-41: Dzień miesiąca (BCD)
-Bit 42-44: Dzień tygodnia (1-7)
-Bit 45-49: Miesiąc (BCD)
-Bit 50-57: Rok (BCD, ostatnie 2 cyfry)
-Bit 58:   Parzystość daty
-Bit 59:   Brak bitu (przygotowanie do markera)
+Bit 0:    Minute marker (always 0)
+Bit 1-14: Weather information and warnings
+Bit 15:   Call bit
+Bit 16:   Time change announcement
+Bit 17:   CEST (summer time)
+Bit 18:   CET (standard time)
+Bit 19:   Leap second
+Bit 20:   Start of time code (always 1)
+Bit 21-27: Minutes (BCD)
+Bit 28:   Minutes parity
+Bit 29-34: Hours (BCD)
+Bit 35:   Hours parity
+Bit 36-41: Day of month (BCD)
+Bit 42-44: Day of week (1-7)
+Bit 45-49: Month (BCD)
+Bit 50-57: Year (BCD, last 2 digits)
+Bit 58:   Date parity
+Bit 59:   No bit (preparation for marker)
 ```
 
-## ⚡ Optymalizacje i ulepszenia / Optimizations
+## ⚡ Optimizations
 
-### Większy zasięg / Extended Range
+### Extended Range
 
-Dla zasięgu >15m potrzebujesz / For range >15m you need:
+For range >15m you need:
 
-1. **Lepszy wzmacniacz**:
+1. **Better amplifier**:
 ```
 GPIO4 → Gate MOSFET IRF540N
 Source → GND
-Drain → Antenna + GND przez rezystor 100Ω
+Drain → Antenna + GND through 100Ω resistor
 ```
 
-2. **Lepsza antena**:
-- Dłuższy pręt ferrytowy (200mm)
-- Więcej zwojów (300-400)
-- Lepszy drut (grubszy 0.5mm)
+2. **Better antenna**:
+- Longer ferrite rod (200mm)
+- More turns (300-400)
+- Better wire (thicker 0.5mm)
 
-3. **Rezonans na 77.5 kHz**:
-- Dodaj kondensator równoległy do anteny
-- Oblicz: C = 1 / (4π²f²L)
-- Dla L=3mH, f=77.5kHz → C ≈ 1.4nF
+3. **Resonance at 77.5 kHz**:
+- Add parallel capacitor to antenna
+- Calculate: C = 1 / (4π²f²L)
+- For L=3mH, f=77.5kHz → C ≈ 1.4nF
 
-### Precyzyjniejsza częstotliwość / More Accurate Frequency
+### More Accurate Frequency
 
-**✅ ZAIMPLEMENTOWANE / IMPLEMENTED (v2.0)**: Obecna implementacja używa PWM do kontroli amplitudy!
+**✅ IMPLEMENTED (v2.0)**: Current implementation uses PWM for amplitude control!
 
-Implementacja PWM dla modulacji amplitudy jest już dostępna w kodzie:
+PWM implementation for amplitude modulation is already available in the code:
 
 ```cpp
-// W config.h:
-#define DCF77_PWM_MODE true          // Włącz tryb PWM / Enable PWM mode
-#define DCF77_AMPLITUDE_LOW 51       // 20% amplituda dla Casio / 20% amplitude for Casio
-#define DCF77_AMPLITUDE_HIGH 0       // 0% amplituda (brak sygnału) / 0% (no signal)
-#define DCF77_PWM_FREQUENCY 2000     // 2 kHz PWM dla kontroli amplitudy / 2 kHz PWM for amplitude control
+// In config.h:
+#define DCF77_PWM_MODE true          // Enable PWM mode
+#define DCF77_AMPLITUDE_LOW 51       // 20% amplitude for Casio
+#define DCF77_AMPLITUDE_HIGH 0       // 0% amplitude (no signal)
+#define DCF77_PWM_FREQUENCY 2000     // 2 kHz PWM for amplitude control
 ```
 
-**Jak to działa / How it works**:
-- PWM (2 kHz) kontroluje średnią amplitudę sygnału / PWM (2 kHz) controls average signal amplitude
-- 20% duty cycle = ~20% mocy dla sygnału LOW / 20% duty cycle = ~20% power for LOW signal
-- 0% duty cycle = brak sygnału dla HIGH / 0% duty cycle = no signal for HIGH
-- Ważne dla zegarków Casio! / Important for Casio watches!
+**How it works**:
+- PWM (2 kHz) controls average signal amplitude
+- 20% duty cycle = ~20% power for LOW signal
+- 0% duty cycle = no signal for HIGH
+- Important for Casio watches!
 
-**Zobacz szczegóły / See details**: [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md)
+**See details**: [DCF77_SIGNAL_LEVELS.md](DCF77_SIGNAL_LEVELS.md)
 
-### Przyszłe ulepszenia / Future improvements
+### Future Improvements
 
-1. **Prawdziwa nośna 77.5 kHz / True 77.5 kHz carrier** (dla jeszcze większego zasięgu / for even better range):
+1. **True 77.5 kHz carrier** (for even better range):
 ```cpp
-// Generowanie nośnej 77.5 kHz (opcjonalne)
 // Generate 77.5 kHz carrier (optional)
 ledcSetup(1, 77500, 8);  // Channel 1, 77.5kHz carrier
 ledcAttachPin(DCF77_PIN, 1);
 ledcWrite(1, 128);  // 50% duty cycle
 ```
 
-2. **Timer hardware**:
-- ESP32 ma timery sprzętowe / ESP32 has hardware timers
-- Można wygenerować dokładnie 77.5 kHz / Can generate exactly 77.5 kHz
+2. **Hardware timer**:
+- ESP32 has hardware timers
+- Can generate exactly 77.5 kHz
 
-## 🔍 Testowanie / Testing
+## 🔍 Testing
 
-### Test bez zegarka / Testing without a watch
+### Testing Without a Watch
 
-1. **LED indicator**: Podłącz LED do GPIO4 przez rezystor 220Ω
-2. **Serial monitor**: Obserwuj transmitowane bity
-3. **Oscyloskop**: Sprawdź timing (100ms/200ms)
-4. **Radio AM**: Odbiornik AM na ~77 kHz może wykryć sygnał
+1. **LED indicator**: Connect LED to GPIO4 through 220Ω resistor
+2. **Serial monitor**: Observe transmitted bits
+3. **Oscilloscope**: Check timing (100ms/200ms)
+4. **AM radio**: AM receiver on ~77 kHz can detect signal
 
-### Debugowanie transmisji / Debug Transmission
+### Debug Transmission
 
-W serial monitor powinieneś zobaczyć:
+In serial monitor you should see:
 ```
 M0100000100 0000011000 1000100001 0001100100 0001000101 0100100
 ```
 
-Gdzie:
-- `M` = Marker minuty
-- Kolejne cyfry = kolejne bity DCF77
-- Spacje co 10 bitów dla czytelności
+Where:
+- `M` = Minute marker
+- Following digits = consecutive DCF77 bits
+- Spaces every 10 bits for readability
 
-## 🌍 Inne systemy czasu radiowego / Other Time Radio Systems
+## 🌍 Other Time Radio Systems
 
-Ten kod można zaadaptować dla:
+This code can be adapted for:
 
 ### WWVB (USA) - 60 kHz
-- Podobny do DCF77
+- Similar to DCF77
 - Timing: 200ms=0, 500ms=1, 800ms=marker
-- Zmień częstotliwość i format danych
+- Change frequency and data format
 
 ### MSF (UK) - 60 kHz  
-- Podobny timing do WWVB
-- Inny format kodowania
+- Similar timing to WWVB
+- Different encoding format
 
 ### JJY (Japan) - 40/60 kHz
-- Dwie częstotliwości
-- Podobny format do WWVB
+- Two frequencies
+- Similar format to WWVB
 
-## 📱 Aplikacja mobilna (przyszłość) / Mobile App (future)
+## 📱 Mobile App (Future)
 
-Możliwe rozszerzenia:
-- ESP32 jako access point
-- Webowy interfejs konfiguracyjny
-- Aplikacja Android/iOS do sterowania
-- Bluetooth LE dla konfiguracji
+Possible extensions:
+- ESP32 as access point
+- Web configuration interface
+- Android/iOS control app
+- Bluetooth LE for configuration
 
-## 🔐 Bezpieczeństwo / Security
+## 🔐 Security
 
-⚠️ **Ważne uwagi prawne**:
+⚠️ **Important legal notes**:
 
-1. **Moc nadawania**: Zachowaj niską moc (<100mW)
-2. **Użytek osobisty**: Tylko do synchronizacji własnych zegarków
-3. **Zasięg**: Ograniczony do własnego mieszkania
-4. **Przepisy lokalne**: Sprawdź lokalne regulacje dotyczące urządzeń RF
-5. **Nie zakłócaj**: Nie powoduj zakłóceń w pasmie 77.5 kHz
+1. **Transmission power**: Keep low power (<100mW)
+2. **Personal use**: Only for synchronizing your own watches
+3. **Range**: Limited to your own home
+4. **Local regulations**: Check local RF device regulations
+5. **Don't interfere**: Don't cause interference in the 77.5 kHz band
 
-## 💡 Wskazówki / Tips
+## 💡 Tips
 
-### Najlepsze godziny synchronizacji
-Casio automatycznie synchronizuje się:
-- **2:00-4:00**: Główne okno synchronizacji
-- **5:00**: Dodatkowa próba (niektóre modele)
+### Best Synchronization Times
+Casio automatically synchronizes:
+- **2:00-4:00 AM**: Main synchronization window
+- **5:00 AM**: Additional attempt (some models)
 
-### Pozycjonowanie zegarka
-- Umieść zegarek **płasko** (antena w zegarku jest pozioma)
-- Odległość: **10-30 cm** od anteny
-- Orientacja: Spróbuj obrócić zegarek o 90° jeśli nie łapie
-- Cisza elektryczna: Wyłącz telefon, laptop podczas sync
+### Watch Positioning
+- Place watch **flat** (watch antenna is horizontal)
+- Distance: **10-30 cm** from antenna
+- Orientation: Try rotating watch 90° if not receiving
+- Electrical silence: Turn off phone, laptop during sync
 
-### Optymalizacja anteny
-- **Eksperymentuj z liczbą zwojów**: 150-300
-- **Ciasne nawinięcie**: Zwoje blisko siebie
-- **Środek pręta**: Nawój na środkowej części
-- **Jakość przewodu**: Emaliowany drut miedziany
+### Antenna Optimization
+- **Experiment with turns**: 150-300
+- **Tight winding**: Turns close together
+- **Center of rod**: Wind on middle section
+- **Wire quality**: Enameled copper wire
 
-## 🛠️ Rozwój projektu / Project Development
+## 🛠️ Project Development
 
-### TODO Lista:
-- [ ] PWM 77.5 kHz dla lepszej modulacji
-- [ ] Web interface dla konfiguracji
-- [ ] Obsługa baterii z miernikiem poziomu
-- [ ] Automatyczna detekcja strefy czasowej
-- [ ] Support dla WWVB/MSF/JJY
-- [ ] OLED display z statusem
+### TODO List:
+- [ ] PWM 77.5 kHz for better modulation
+- [ ] Web interface for configuration
+- [ ] Battery support with level meter
+- [ ] Automatic timezone detection
+- [ ] Support for WWVB/MSF/JJY
+- [ ] OLED display with status
 - [ ] OTA (Over The Air) updates
-- [ ] Statystyki synchronizacji
+- [ ] Synchronization statistics
 
 ### Contribution
-Zachęcamy do pull requestów! Propozycje:
-- Tłumaczenia dokumentacji
-- Nowe funkcje
-- Optymalizacje zasięgu
-- Testy z różnymi zegarkami
-- Schematy PCB
+Pull requests welcome! Suggestions:
+- Documentation translations
+- New features
+- Range optimizations
+- Tests with different watches
+- PCB schematics
 
-## 📞 Wsparcie / Support
+## 📞 Support
 
-Problemy? Issues:
+Problems? Issues:
 - GitHub Issues: https://github.com/cino893/dcf77-xiao-esp32/issues
-- Opisz problem szczegółowo
-- Dołącz logi z serial monitor
-- Informacje o hardware
+- Describe problem in detail
+- Attach logs from serial monitor
+- Hardware information
 
-## 🙏 Podziękowania / Credits
+## 🙏 Credits
 
-Projekt inspirowany przez:
+Project inspired by:
 - DCF77 library by Udo Klein
 - ESP32 Arduino Core by Espressif
 - Community contributions
 
-## 📚 Bibliografia / References
+## 📚 References
 
 ### DCF77 Protocol
 - [PTB Official DCF77 Info](https://www.ptb.de/cms/en/ptb/fachabteilungen/abt4/fb-44/ag-442/dissemination-of-legal-time/dcf77.html)
@@ -224,4 +223,4 @@ Projekt inspirowany przez:
 
 ---
 
-**Miłej zabawy z projektem! / Have fun with the project!** 🎉
+**Have fun with the project!** 🎉
