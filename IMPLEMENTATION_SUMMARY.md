@@ -14,33 +14,33 @@ The previous implementation used simple GPIO on/off switching, which did not pro
 
 ## Solution Implemented
 
-### 1. PWM-Based Amplitude Modulation
+### 1. PWM-Based Carrier Generation with Amplitude Modulation
 
-Implemented hardware PWM using ESP32's LEDC peripheral:
-- **PWM Frequency**: 2 kHz (configurable)
-- **Resolution**: 8-bit (0-255)
-- **LOW amplitude**: 51 (20% duty cycle) - configurable
-- **HIGH amplitude**: 0 (0% duty cycle) - configurable
+Implemented hardware PWM using ESP32's LEDC peripheral to generate 77.5 kHz carrier:
+- **PWM Frequency**: 77.5 kHz (DCF77 carrier frequency)
+- **Resolution**: 8-bit (0-255 duty cycle)
+- **LOW amplitude**: 51 (20% duty cycle = reduced carrier) - configurable
+- **HIGH amplitude**: 0 (0% duty cycle = no carrier) - configurable
 
 ### 2. Configuration System
 
 Added comprehensive configuration options in `config.h`:
 ```cpp
-#define DCF77_PWM_MODE true           // Enable PWM mode
-#define DCF77_AMPLITUDE_LOW 51        // 20% amplitude
-#define DCF77_AMPLITUDE_HIGH 0        // 0% amplitude
-#define DCF77_PWM_FREQUENCY 2000      // 2 kHz PWM
+#define DCF77_PWM_MODE true              // Enable PWM mode
+#define DCF77_AMPLITUDE_LOW 51           // 20% duty = reduced carrier
+#define DCF77_AMPLITUDE_HIGH 0           // 0% duty = no carrier
+#define DCF77_CARRIER_FREQUENCY 77500    // 77.5 kHz carrier
 ```
 
 ### 3. Code Changes
 
 #### New Functions
-- `setupDCF77Output()`: Configures PWM or GPIO mode based on settings
-- `setDCF77Amplitude(uint8_t)`: Sets signal amplitude (0-255)
+- `setupDCF77Output()`: Configures PWM to generate 77.5 kHz carrier or GPIO mode
+- `setDCF77Amplitude(uint8_t)`: Sets carrier amplitude via duty cycle (0-255)
 
 #### Modified Functions
 - `setup()`: Now calls `setupDCF77Output()` instead of direct GPIO setup
-- `transmitDCF77Signal()`: Uses `setDCF77Amplitude()` instead of `digitalWrite()`
+- `transmitDCF77Signal()`: Uses `setDCF77Amplitude()` to modulate carrier amplitude
 
 #### Backward Compatibility
 - Legacy GPIO mode remains available (set `DCF77_PWM_MODE false`)
@@ -53,7 +53,7 @@ Created three comprehensive documents:
 #### DCF77_SIGNAL_LEVELS.md (10KB)
 - DCF77 specification and standard requirements
 - Casio-specific requirements and sensitivity
-- PWM vs GPIO mode comparison
+- PWM carrier generation vs GPIO mode comparison
 - Signal testing and measurement procedures
 - Configuration guide with recommendations
 - Troubleshooting amplitude issues
@@ -81,11 +81,14 @@ Created three comprehensive documents:
 ### PWM Implementation
 
 The PWM approach works as follows:
-1. ESP32 generates 2 kHz PWM signal on GPIO4
-2. 20% duty cycle creates average voltage of ~0.66V (on 3.3V system)
-3. Low-pass filtering by antenna circuit converts PWM to DC level
-4. Reduced DC voltage drives transistor with lower current
-5. Lower transistor current produces ~20% amplitude RF signal
+1. ESP32 generates 77.5 kHz PWM signal on GPIO4 (actual DCF77 carrier)
+2. Duty cycle controls carrier amplitude for amplitude modulation:
+   - 0% duty cycle = no carrier (carrier off)
+   - 20% duty cycle = reduced amplitude carrier (for Casio AM detection)
+   - 50% duty cycle = full amplitude carrier (square wave)
+3. During 100ms/200ms pulses: 20% duty transmits reduced carrier
+4. Rest of second: 0% duty turns carrier completely off
+5. This creates proper AM-modulated DCF77 signal
 
 ### Signal Timing
 

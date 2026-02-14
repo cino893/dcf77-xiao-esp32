@@ -19,17 +19,17 @@ This document provides guidance on testing the DCF77 signal implementation, part
 === DCF77 Emulator for XIAO ESP32C3 ===
 Boot count: 1
 Configuring DCF77 output...
-  Mode: PWM amplitude modulation
-  LOW amplitude: 51 (~20.0%)
-  HIGH amplitude: 0 (~0.0%)
-  PWM frequency: 2000 Hz
+  Mode: 77.5 kHz PWM carrier with amplitude modulation
+  Carrier frequency: 77500 Hz (77.5 kHz)
+  LOW amplitude: 51 (~20.0% duty cycle = reduced carrier)
+  HIGH amplitude: 0 (~0.0% duty cycle = no carrier)
 ```
 
 **Pass Criteria**:
-- ✅ Mode shows "PWM amplitude modulation" (not "Simple GPIO on/off")
+- ✅ Mode shows "77.5 kHz PWM carrier with amplitude modulation" (not "Simple GPIO on/off")
+- ✅ Carrier frequency is 77500 Hz (77.5 kHz)
 - ✅ LOW amplitude is 51 (or your configured value)
 - ✅ HIGH amplitude is 0
-- ✅ PWM frequency is 2000 Hz
 
 **If Test Fails**:
 - Check that `config.h` has `#define DCF77_PWM_MODE true`
@@ -156,14 +156,15 @@ LED Cathode (-, shorter leg) → GND
 #### At GPIO4 During LOW Amplitude (100ms or 200ms pulse):
 ```
 Channel 1 (GPIO4):
-Time scale: 500 μs/div
+Time scale: 5 μs/div (to see 77.5 kHz waveform)
 Voltage scale: 1 V/div
 
 Expected:
-- PWM waveform at 2 kHz (500 μs period)
-- Duty cycle: ~20% (100 μs high, 400 μs low)
+- PWM waveform at 77.5 kHz (12.9 μs period)
+- Duty cycle: ~20% (2.6 μs high, 10.3 μs low)
 - High voltage: 3.3V
 - Low voltage: 0V
+- This creates reduced amplitude 77.5 kHz carrier
 ```
 
 #### At GPIO4 During HIGH Amplitude (rest of second):
@@ -174,7 +175,7 @@ Voltage scale: 1 V/div
 
 Expected:
 - Constant 0V
-- No PWM pulses
+- No carrier (no PWM pulses)
 ```
 
 #### Timing Verification:
@@ -190,7 +191,7 @@ Measure:
 ```
 
 **Pass Criteria**:
-- ✅ PWM frequency is 2000 Hz (500 μs period) ±5%
+- ✅ PWM frequency is 77500 Hz (12.9 μs period) ±5%
 - ✅ PWM duty cycle is 20% ±2%
 - ✅ Bit timing is accurate within 2ms
 - ✅ HIGH amplitude is stable 0V
